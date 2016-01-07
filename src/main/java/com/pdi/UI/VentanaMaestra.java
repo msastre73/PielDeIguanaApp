@@ -83,18 +83,38 @@ public class VentanaMaestra extends javax.swing.JFrame {
         jMenu1.add(jMenuItem1);
 
         jMenuItem2.setText("Clientes");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem2);
 
         jMenuItem3.setText("Aliados");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem3);
 
         jMenuItem4.setText("Caja");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem4);
 
-        jMenuItem5.setText("Inversiones");
+        jMenuItem5.setText("Inventario");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem5);
 
-        jMenuItem6.setText("Inventario");
+        jMenuItem6.setText("Inversiones");
         jMenu1.add(jMenuItem6);
 
         jMenuBar1.add(jMenu1);
@@ -156,7 +176,7 @@ public class VentanaMaestra extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
+        
         if (!EventosVentana.abierta) {
             EventosVentana v = new EventosVentana();
             jDesktopPane1.add(v);
@@ -166,6 +186,50 @@ public class VentanaMaestra extends javax.swing.JFrame {
             v.setVisible(true);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+         if (!ClientesVentana.abierta) {
+            ClientesVentana v = new ClientesVentana();
+            jDesktopPane1.add(v);
+            Dimension desktopDim = jDesktopPane1.getSize();
+            v.setSize(desktopDim);
+            System.out.println(desktopDim);
+            v.setVisible(true);
+        }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+          if (!AliadosVentana.abierta) {
+            AliadosVentana v = new AliadosVentana();
+            jDesktopPane1.add(v);
+            Dimension desktopDim = jDesktopPane1.getSize();
+            v.setSize(desktopDim);
+            System.out.println(desktopDim);
+            v.setVisible(true);
+        }
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+          if (!CajaVentana.abierta) {
+            CajaVentana v = new CajaVentana();
+            jDesktopPane1.add(v);
+            Dimension desktopDim = jDesktopPane1.getSize();
+            v.setSize(desktopDim);
+            System.out.println(desktopDim);
+            v.setVisible(true);
+        }
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+         if (!InventarioVentana.abierta) {
+            InventarioVentana v = new InventarioVentana();
+            jDesktopPane1.add(v);
+            Dimension desktopDim = jDesktopPane1.getSize();
+            v.setSize(desktopDim);
+            System.out.println(desktopDim);
+            v.setVisible(true);
+         }
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     /**
      * @param args the command line arguments
