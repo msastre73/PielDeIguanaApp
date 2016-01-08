@@ -15,6 +15,9 @@ import java.text.SimpleDateFormat;
 public class General {
     public static SimpleDateFormat formatoFecha = 
             new SimpleDateFormat("dd/MM/yyyy");
+    
+    public final static String formatoMail = 
+            "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
    
     
 }

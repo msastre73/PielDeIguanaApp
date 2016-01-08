@@ -11,7 +11,7 @@ package com.pdi.negocio.entidades.base;
  */
 public abstract class Persona {
     //Atributos
-    private int id;
+    private String id;
     private String nombre;
     private String apellido;
     private String mail;
@@ -21,7 +21,7 @@ public abstract class Persona {
     public Persona() {
     }
 
-    public Persona(int id, String nombre, String apellido, String mail) {
+    public Persona(String id, String nombre, String apellido, String mail) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;
@@ -30,11 +30,11 @@ public abstract class Persona {
     
     //Gettesr y Setters
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

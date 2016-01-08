@@ -22,7 +22,7 @@ public class Cliente extends Persona{
     public Cliente() {
     }
 
-    public Cliente(List<Evento> eventos, float descuento, int id, String nombre,
+    public Cliente(List<Evento> eventos, float descuento, String id, String nombre,
             String apellido, String mail) {
         super(id, nombre, apellido, mail);
         this.eventos = eventos;
@@ -64,6 +64,12 @@ public class Cliente extends Persona{
     public void setDescuento(float descuento) {
         this.descuento = descuento;
     }
+
+    @Override
+    public String toString() {
+        return getNombre() + " " + getApellido();
+    }
+    
     
     
     

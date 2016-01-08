@@ -43,6 +43,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
         //Inicializa los componentes 
         initComponents();
+        //Relaciona el modelo con la lista
         eventosList.setModel(modeloLista);
         //Carga Todos los Datos
         cargarEventos();
@@ -51,7 +52,6 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         //cargarAliados();
         cargarEstados();
         System.out.println("Todos los elementos fueron cargados");
-        //Relaciona el modelo con la lista
 
     }
 
@@ -107,6 +107,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         pagadoTxt = new javax.swing.JTextField();
         adeudadoTxt = new javax.swing.JTextField();
         generarOrdenDeCompraBtn = new javax.swing.JButton();
+        cargandoTxt = new javax.swing.JLabel();
 
         setClosable(true);
         setIconifiable(true);
@@ -495,26 +496,31 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         generarOrdenDeCompraBtn.setText("Generar Orden de Compra");
         generarOrdenDeCompraBtn.setEnabled(false);
 
+        cargandoTxt.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        cargandoTxt.setText("test");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(generarPDFBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(generarOrdenDeCompraBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(editarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(eliminarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(generarPDFBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(generarOrdenDeCompraBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(editarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(eliminarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cargandoTxt))
+                .addContainerGap())
             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 841, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
@@ -525,7 +531,9 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(generarPDFBtn)
                         .addGap(18, 18, 18)
-                        .addComponent(generarOrdenDeCompraBtn))
+                        .addComponent(generarOrdenDeCompraBtn)
+                        .addGap(30, 30, 30)
+                        .addComponent(cargandoTxt))
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -598,7 +606,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 } else {
                     editar(e, this);
                 }
-                eventosList.setSelectedValue(e, true);
+                
                 deshabilitarDetalles();
 
             } catch (java.text.ParseException ex) {
@@ -676,25 +684,24 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
     private void eliminarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarBtnActionPerformed
         Evento e = (Evento) eventosList.getSelectedValue();
-        
+
         //Menaje de Confirmacion
         int rta = JOptionPane.showConfirmDialog(this,
-                    "Confirma que quiere eliminar este evento?:\n" + e.toString(),
-                    "Confirmar eliminacion", JOptionPane.YES_NO_OPTION);
-        
-        if(rta == JOptionPane.NO_OPTION){
+                "Confirma que quiere eliminar este evento?:\n" + e.toString(),
+                "Confirmar eliminacion", JOptionPane.YES_NO_OPTION);
+
+        if (rta == JOptionPane.NO_OPTION) {
             return;
-        }else{
+        } else {
             eliminar(e, this);
+            limpiarFormulario();
             editarBtn.setEnabled(false);
             eliminarBtn.setEnabled(false);
             generarPDFBtn.setEnabled(false);
             generarOrdenDeCompraBtn.setEnabled(false);
         }
-        
-        
-        
-        
+
+
     }//GEN-LAST:event_eliminarBtnActionPerformed
 
     private void habilitarDetalles() {
@@ -753,12 +760,13 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         clienteCmb.setSelectedIndex(-1);
         aliadoCmb.setSelectedIndex(-1);
         estadoCmb.setSelectedIndex(-1);
+        eventosList.clearSelection();
 
     }
 
     //Guardar el Evento en Parse
     private void agregar(final Evento e, final Component c) {
-
+        cargandoTxt.setText("Guardando evento...");
         final ParseObject eventoParse = new ParseObject("Eventos");
 
         eventoParse.put("lugar", e.getLugar());
@@ -791,6 +799,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
             @Override
             public void done(ParseException parseException) {
+                cargandoTxt.setText("");
 
                 if (parseException == null) {
                     JOptionPane.showMessageDialog(c, //Componente
@@ -799,6 +808,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                             JOptionPane.INFORMATION_MESSAGE); //Imagen
                     e.setId(eventoParse.getObjectId());
                     modeloLista.addElement(e);
+                    eventosList.setSelectedValue(e, true);
                     System.out.println("Objeto guardado con ID: " + e.getId());
                 } else {
                     JOptionPane.showMessageDialog(c, //Componente
@@ -815,7 +825,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
     //Edita un evento existente a partir de su ID
     private void editar(final Evento e, final Component c) {
-
+        cargandoTxt.setText("Editando evento...");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Eventos");
         query.getInBackground(e.getId(), new GetCallback<ParseObject>() {
 
@@ -854,18 +864,20 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
                             @Override
                             public void done(ParseException parseException) {
+                                cargandoTxt.setText("");
 
                                 if (parseException == null) {
                                     JOptionPane.showMessageDialog(c, //Componente
-                                            "Evento Guardado Correctamente", //Mensaje
+                                            "Evento Editado Correctamente", //Mensaje
                                             "Evento Guardado", //Titulo
                                             JOptionPane.INFORMATION_MESSAGE); //Imagen
 
                                     System.out.println("Objeto ID: " + e.getId() + "editado");
+                                    eventosList.setSelectedValue(e, true);
                                 } else {
                                     JOptionPane.showMessageDialog(c, //Componente
-                                            "Error: " + parseException.toString(), //Mensaje
-                                            "Error al guardar el evento", //Titulo
+                                            parseException.toString(), //Mensaje
+                                            "Error al editar el evento", //Titulo
                                             JOptionPane.WARNING_MESSAGE); //Imagen
 
                                 }
@@ -891,32 +903,42 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         });
 
     }
-    
+
     //Elimina un evento existente a partir de su ID
-    private void eliminar(final Evento e, final Component c){
-        
+    private void eliminar(final Evento e, final Component c) {
+        cargandoTxt.setText("Eliminando evento...");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Eventos");
         query.getInBackground(e.getId(), new GetCallback<ParseObject>() {
 
             @Override
             public void done(ParseObject eventoParse, ParseException parseException) {
-                eventoParse.deleteInBackground(new DeleteCallback() {
 
-                    @Override
-                    public void done(ParseException parseException) {
-                        if(parseException==null){
-                            JOptionPane.showMessageDialog(c, //Componente
-                                            "Evento Eliminado Correctamente", //Mensaje
-                                            "Evento Eliminado", //Titulo
-                                            JOptionPane.INFORMATION_MESSAGE); //Imagen
-                            modeloLista.removeElement(e);
+                if (parseException == null) {
+                    eventoParse.deleteInBackground(new DeleteCallback() {
+
+                        @Override
+                        public void done(ParseException parseException) {
+                            cargandoTxt.setText("");
+                            if (parseException == null) {
+                                JOptionPane.showMessageDialog(c, //Componente
+                                        "Evento Eliminado Correctamente", //Mensaje
+                                        "Evento Eliminado", //Titulo
+                                        JOptionPane.INFORMATION_MESSAGE); //Imagen
+                                modeloLista.removeElement(e);
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    JOptionPane.showMessageDialog(c, //Componente
+                            parseException.toString(), //Mensaje
+                            "Error al eliminar el Evento", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
+
             }
-            
+
         });
-        
+
     }
 
     private void cargarTiposDeEventos() {
@@ -931,6 +953,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     }
 
     private void cargarEventos() {
+        cargandoTxt.setText("Cargando eventos...");
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Eventos");
 
         final Component c = this;
@@ -938,6 +961,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
             @Override
             public void done(List<ParseObject> eventosParse, ParseException parseException) {
+                cargandoTxt.setText("");
                 if (parseException == null) {
 
                     if (eventosParse != null) {
@@ -981,7 +1005,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
                 } else {
                     JOptionPane.showMessageDialog(c, //Componente
-                            "Error: " + parseException.toString(), //Mensaje
+                            parseException.toString(), //Mensaje
                             "Error al cargar los eventos", //Titulo
                             JOptionPane.WARNING_MESSAGE); //Imagen
                 }
@@ -1151,6 +1175,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     private javax.swing.JTextField adeudadoTxt;
     private javax.swing.JComboBox aliadoCmb;
     private javax.swing.JButton cancelarBtn;
+    private javax.swing.JLabel cargandoTxt;
     private javax.swing.JComboBox clienteCmb;
     private javax.swing.JButton consumidoBtn;
     private javax.swing.JTextField costoTxt;

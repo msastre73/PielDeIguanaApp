@@ -23,7 +23,8 @@ public class Aliado extends Persona{
     public Aliado() {
     }
 
-    public Aliado(List<Evento> eventos, float comisionMonto, float comisionPorcentaje, int id, String nombre, String apellido, String mail) {
+    public Aliado(List<Evento> eventos, float comisionMonto, float comisionPorcentaje,
+            String id, String nombre, String apellido, String mail) {
         super(id, nombre, apellido, mail);
         this.eventos = eventos;
         this.comisionMonto = comisionMonto;
