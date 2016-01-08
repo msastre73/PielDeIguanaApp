@@ -5,6 +5,24 @@
  */
 package com.pdi.UI;
 
+import javax.swing.DefaultListModel;
+import org.parse4j.ParseException;
+import org.parse4j.ParseObject;
+import org.parse4j.callback.SaveCallback;
+import com.pdi.negocio.entidades.finales.*;
+import com.pdi.util.General;
+import com.pdi.negocio.enums.TipoDeEvento;
+import com.pdi.negocio.enums.EstadoDeEvento;
+import java.awt.Component;
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+
+import javax.swing.JOptionPane;
+import org.parse4j.ParseQuery;
+import org.parse4j.callback.DeleteCallback;
+import org.parse4j.callback.FindCallback;
+import org.parse4j.callback.GetCallback;
+
 /**
  *
  * @author Marcos Sastre
@@ -14,12 +32,27 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     /**
      * Creates new form EventoVentana
      */
-    
     //Atrib para manejar si hay una ventana abierta de este tipo
     public static boolean abierta = false;
-    
+
+    DefaultListModel modeloLista = new DefaultListModel();
+
     public EventosVentana() {
+        //Pone en verdadero el atrib que controla si la ventana esta abierta
+        this.abierta = true;
+
+        //Inicializa los componentes 
         initComponents();
+        eventosList.setModel(modeloLista);
+        //Carga Todos los Datos
+        cargarEventos();
+        cargarTiposDeEventos();
+        //cargarClientes();
+        //cargarAliados();
+        cargarEstados();
+        System.out.println("Todos los elementos fueron cargados");
+        //Relaciona el modelo con la lista
+
     }
 
     /**
@@ -33,13 +66,13 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        eventosList = new javax.swing.JList();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        editarBtn = new javax.swing.JButton();
+        eliminarBtn = new javax.swing.JButton();
+        generarPDFBtn = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        jButton6 = new javax.swing.JButton();
+        guardarBtn = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         lugarTxt = new javax.swing.JTextField();
@@ -48,32 +81,32 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         personasTxt = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox();
+        tipoDeEventoCmb = new javax.swing.JComboBox();
         jPanel4 = new javax.swing.JPanel();
-        jButton9 = new javax.swing.JButton();
-        jComboBox1 = new javax.swing.JComboBox();
+        nuevoClienteBtn = new javax.swing.JButton();
+        clienteCmb = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jComboBox3 = new javax.swing.JComboBox();
-        jButton7 = new javax.swing.JButton();
+        aliadoCmb = new javax.swing.JComboBox();
+        nuevoAliadoBtn = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
-        jTextField7 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jButton5 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
+        precioTxt = new javax.swing.JTextField();
+        costoTxt = new javax.swing.JTextField();
+        resultadoTxt = new javax.swing.JTextField();
+        cotizarBtn = new javax.swing.JButton();
+        consumidoBtn = new javax.swing.JButton();
+        cancelarBtn = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jComboBox4 = new javax.swing.JComboBox();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField8 = new javax.swing.JTextField();
-        jButton10 = new javax.swing.JButton();
+        estadoCmb = new javax.swing.JComboBox();
+        pagadoTxt = new javax.swing.JTextField();
+        adeudadoTxt = new javax.swing.JTextField();
+        generarOrdenDeCompraBtn = new javax.swing.JButton();
 
         setClosable(true);
         setIconifiable(true);
@@ -85,15 +118,38 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         } catch (java.beans.PropertyVetoException e1) {
             e1.printStackTrace();
         }
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameClosed(evt);
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameClosing(evt);
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Listado de Eventos"));
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
+        eventosList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane1.setViewportView(jList1);
+        eventosList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                eventosListMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(eventosList);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -110,22 +166,47 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         );
 
         jButton1.setText("Nuevo");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Editar");
+        editarBtn.setText("Editar");
+        editarBtn.setEnabled(false);
+        editarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editarBtnActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Eliminar");
+        eliminarBtn.setText("Eliminar");
+        eliminarBtn.setEnabled(false);
+        eliminarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminarBtnActionPerformed(evt);
+            }
+        });
 
-        jButton4.setText("Generar PDF");
+        generarPDFBtn.setText("Generar PDF");
+        generarPDFBtn.setEnabled(false);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Detalles del Evento"));
 
-        jButton6.setText("Guardar");
+        guardarBtn.setText("Guardar");
+        guardarBtn.setEnabled(false);
+        guardarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarBtnActionPerformed(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Info General"));
         jPanel2.setToolTipText("");
 
         jLabel2.setText("Lugar:");
 
+        lugarTxt.setEnabled(false);
         lugarTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 lugarTxtActionPerformed(evt);
@@ -134,11 +215,18 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
         jLabel1.setText("Fecha:");
 
+        fechaTxt.setEnabled(false);
+
         jLabel4.setText("Cantidad de Personas:");
+
+        personasTxt.setEnabled(false);
 
         jLabel5.setText("Tiipo de Evento:");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        tipoDeEventoCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        tipoDeEventoCmb.setSelectedIndex(-1);
+        tipoDeEventoCmb.setToolTipText("");
+        tipoDeEventoCmb.setEnabled(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -161,7 +249,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(tipoDeEventoCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -182,25 +270,31 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(tipoDeEventoCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Contacto"));
 
-        jButton9.setText("Nuevo Cliente");
+        nuevoClienteBtn.setText("Nuevo Cliente");
+        nuevoClienteBtn.setEnabled(false);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        clienteCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        clienteCmb.setSelectedIndex(-1);
+        clienteCmb.setEnabled(false);
 
         jLabel3.setText("Cliente:");
 
         jLabel7.setText("Aliado:");
 
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        aliadoCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        aliadoCmb.setSelectedIndex(-1);
+        aliadoCmb.setEnabled(false);
 
-        jButton7.setText("Nuevo Aliado");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        nuevoAliadoBtn.setText("Nuevo Aliado");
+        nuevoAliadoBtn.setEnabled(false);
+        nuevoAliadoBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                nuevoAliadoBtnActionPerformed(evt);
             }
         });
 
@@ -212,15 +306,15 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(nuevoClienteBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(clienteCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(nuevoAliadoBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(aliadoCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -228,15 +322,15 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(clienteCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
-                .addComponent(jButton9)
+                .addComponent(nuevoClienteBtn)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(aliadoCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton7))
+                .addComponent(nuevoAliadoBtn))
         );
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Info Economica"));
@@ -247,9 +341,17 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
         jLabel6.setText("Resultado:");
 
-        jButton5.setText("Cotizar");
+        precioTxt.setEnabled(false);
 
-        jButton8.setText("Consumido");
+        costoTxt.setEnabled(false);
+
+        resultadoTxt.setEnabled(false);
+
+        cotizarBtn.setText("Cotizar");
+        cotizarBtn.setEnabled(false);
+
+        consumidoBtn.setText("Consumido");
+        consumidoBtn.setEnabled(false);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -260,19 +362,19 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField6))
+                        .addComponent(precioTxt))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField7))
+                        .addComponent(costoTxt))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(resultadoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(consumidoBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cotizarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -280,21 +382,27 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(jTextField6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5))
+                    .addComponent(precioTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cotizarBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(jTextField7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton8))
+                    .addComponent(costoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(consumidoBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(resultadoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton11.setText("Cancelar");
+        cancelarBtn.setText("Cancelar");
+        cancelarBtn.setEnabled(false);
+        cancelarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarBtnActionPerformed(evt);
+            }
+        });
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Situacion"));
 
@@ -304,9 +412,14 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
         jLabel9.setText("Adeudado:");
 
-        jComboBox4.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        estadoCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        estadoCmb.setSelectedIndex(-1);
+        estadoCmb.setEnabled(false);
 
-        jTextField8.setToolTipText("");
+        pagadoTxt.setEnabled(false);
+
+        adeudadoTxt.setToolTipText("");
+        adeudadoTxt.setEnabled(false);
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -315,30 +428,30 @@ public class EventosVentana extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField8))
+                .addComponent(adeudadoTxt))
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jTextField5))
+                .addComponent(pagadoTxt))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addComponent(jLabel12)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(estadoCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
-                    .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(estadoCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pagadoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel9)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(adeudadoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -359,9 +472,9 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(guardarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cancelarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(218, 218, 218))))
         );
         jPanel3Layout.setVerticalGroup(
@@ -375,11 +488,12 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(cancelarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guardarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
-        jButton10.setText("Generar Orden de Compra");
+        generarOrdenDeCompraBtn.setText("Generar Orden de Compra");
+        generarOrdenDeCompraBtn.setEnabled(false);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -389,11 +503,11 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(generarPDFBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(generarOrdenDeCompraBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(editarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(eliminarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(16, 16, 16))
             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 841, Short.MAX_VALUE)
         );
@@ -405,13 +519,13 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)
+                        .addComponent(editarBtn)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3)
+                        .addComponent(eliminarBtn)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton4)
+                        .addComponent(generarPDFBtn)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton10))
+                        .addComponent(generarOrdenDeCompraBtn))
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -424,28 +538,632 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_lugarTxtActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void nuevoAliadoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoAliadoBtnActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }//GEN-LAST:event_nuevoAliadoBtnActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        limpiarFormulario();
+        habilitarDetalles();
+        lugarTxt.requestFocus();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void guardarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarBtnActionPerformed
+
+        boolean validacionOK = validarForm();
+        boolean esNuevo = true;
+        if (validacionOK) {
+            try {
+                Evento e = new Evento();
+
+                //Si hay algun evento seleccionado lo utiliza para actualizarlo
+                if (eventosList.getSelectedIndex() != -1) {
+                    e = (Evento) eventosList.getSelectedValue();
+                    esNuevo = false;
+                }
+
+                e.setLugar(lugarTxt.getText());
+                e.setFecha(General.formatoFecha.parse(fechaTxt.getText()));
+                e.setCantidadDePersonas(Integer.parseInt(personasTxt.getText()));
+                e.setTipoDeEvento((TipoDeEvento) tipoDeEventoCmb.getSelectedItem());
+                //e.setCliente((Cliente) clienteCmb.getSelectedItem());
+
+                if (aliadoCmb.getSelectedIndex() != -1) {
+                    e.setAliado((Aliado) aliadoCmb.getSelectedItem());
+                }
+
+                e.setPrecio(Float.parseFloat(precioTxt.getText()));
+
+                if (!costoTxt.getText().equals("")) {
+                    e.setCosto(Float.parseFloat(costoTxt.getText()));
+                }
+
+                if (!resultadoTxt.getText().equals("")) {
+                    e.setResultado(Float.parseFloat(resultadoTxt.getText()));
+                }
+
+                e.setEstadoDeEvento((EstadoDeEvento) estadoCmb.getSelectedItem());
+
+                if (!pagadoTxt.getText().equals("")) {
+                    e.setMontoPagado(Float.parseFloat(pagadoTxt.getText()));
+                }
+
+                if (!adeudadoTxt.getText().equals("")) {
+                    e.setMontoRestante(Float.parseFloat(adeudadoTxt.getText()));
+                }
+
+                if (esNuevo) {
+                    agregar(e, this);
+
+                } else {
+                    editar(e, this);
+                }
+                eventosList.setSelectedValue(e, true);
+                deshabilitarDetalles();
+
+            } catch (java.text.ParseException ex) {
+                //El codigo nunca deberia llegar aca porque la fecha se testea
+                //en validForm()
+
+            }
+        }
+
+
+    }//GEN-LAST:event_guardarBtnActionPerformed
+
+    private void formInternalFrameClosing(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosing
+
+    }//GEN-LAST:event_formInternalFrameClosing
+
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
+        abierta = false;
+    }//GEN-LAST:event_formInternalFrameClosed
+
+    private void eventosListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_eventosListMouseClicked
+        //Activa los botones correspondientes
+        editarBtn.setEnabled(true);
+        eliminarBtn.setEnabled(true);
+        generarPDFBtn.setEnabled(true);
+        generarOrdenDeCompraBtn.setEnabled(true);
+
+        //Obtiene el tiem seleccionado y completa los campos
+        Evento e = (Evento) eventosList.getSelectedValue();
+
+        lugarTxt.setText(e.getLugar());
+        fechaTxt.setText(General.formatoFecha.format(e.getFecha()));
+        personasTxt.setText(Integer.toString(e.getCantidadDePersonas()));
+        tipoDeEventoCmb.setSelectedItem(e.getTipoDeEvento());
+        //eventoParse.performOperation("cliente", null);
+        //eventoParse.performOperation("aliado", null);
+        precioTxt.setText(Float.toString(e.getPrecio()));
+
+        if (e.getCosto() != 0) {
+            costoTxt.setText(Float.toString(e.getCosto()));
+        }
+
+        if (e.getResultado() != 0) {
+            resultadoTxt.setText(Float.toString(e.getResultado()));
+        }
+
+        estadoCmb.setSelectedItem(e.getEstadoDeEvento());
+
+        if (e.getMontoPagado() != 0) {
+            pagadoTxt.setText(Float.toString(e.getMontoPagado()));
+        }
+
+        if (e.getMontoRestante() != 0) {
+            adeudadoTxt.setText(Float.toString(e.getMontoRestante()));
+        }
+
+
+    }//GEN-LAST:event_eventosListMouseClicked
+
+    private void editarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarBtnActionPerformed
+        habilitarDetalles();
+    }//GEN-LAST:event_editarBtnActionPerformed
+
+    private void cancelarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarBtnActionPerformed
+        limpiarFormulario();
+        deshabilitarDetalles();
+        //Deshabilita los botones restantes
+        editarBtn.setEnabled(false);
+        eliminarBtn.setEnabled(false);
+        generarPDFBtn.setEnabled(false);
+        generarOrdenDeCompraBtn.setEnabled(false);
+
+
+    }//GEN-LAST:event_cancelarBtnActionPerformed
+
+    private void eliminarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarBtnActionPerformed
+        Evento e = (Evento) eventosList.getSelectedValue();
+        
+        //Menaje de Confirmacion
+        int rta = JOptionPane.showConfirmDialog(this,
+                    "Confirma que quiere eliminar este evento?:\n" + e.toString(),
+                    "Confirmar eliminacion", JOptionPane.YES_NO_OPTION);
+        
+        if(rta == JOptionPane.NO_OPTION){
+            return;
+        }else{
+            eliminar(e, this);
+            editarBtn.setEnabled(false);
+            eliminarBtn.setEnabled(false);
+            generarPDFBtn.setEnabled(false);
+            generarOrdenDeCompraBtn.setEnabled(false);
+        }
+        
+        
+        
+        
+    }//GEN-LAST:event_eliminarBtnActionPerformed
+
+    private void habilitarDetalles() {
+        lugarTxt.setEnabled(true);
+        fechaTxt.setEnabled(true);
+        personasTxt.setEnabled(true);
+        tipoDeEventoCmb.setEnabled(true);
+        clienteCmb.setEnabled(true);
+        nuevoClienteBtn.setEnabled(true);
+        aliadoCmb.setEnabled(true);
+        nuevoAliadoBtn.setEnabled(true);
+        precioTxt.setEnabled(true);
+        costoTxt.setEnabled(true);
+        resultadoTxt.setEnabled(true);
+        cotizarBtn.setEnabled(true);
+        consumidoBtn.setEnabled(true);
+        estadoCmb.setEnabled(true);
+        pagadoTxt.setEnabled(true);
+        adeudadoTxt.setEnabled(true);
+        guardarBtn.setEnabled(true);
+        cancelarBtn.setEnabled(true);
+
+    }
+
+    private void deshabilitarDetalles() {
+        lugarTxt.setEnabled(false);
+        fechaTxt.setEnabled(false);
+        personasTxt.setEnabled(false);
+        tipoDeEventoCmb.setEnabled(false);
+        clienteCmb.setEnabled(false);
+        nuevoClienteBtn.setEnabled(false);
+        aliadoCmb.setEnabled(false);
+        nuevoAliadoBtn.setEnabled(false);
+        precioTxt.setEnabled(false);
+        costoTxt.setEnabled(false);
+        resultadoTxt.setEnabled(false);
+        cotizarBtn.setEnabled(false);
+        consumidoBtn.setEnabled(false);
+        estadoCmb.setEnabled(false);
+        pagadoTxt.setEnabled(false);
+        adeudadoTxt.setEnabled(false);
+        guardarBtn.setEnabled(false);
+        cancelarBtn.setEnabled(false);
+    }
+
+    private void limpiarFormulario() {
+        fechaTxt.setText("");
+        lugarTxt.setText("");
+        precioTxt.setText("");
+        costoTxt.setText("");
+        resultadoTxt.setText("");
+        pagadoTxt.setText("");
+        adeudadoTxt.setText("");
+        personasTxt.setText("");
+        tipoDeEventoCmb.setSelectedIndex(-1);
+        clienteCmb.setSelectedIndex(-1);
+        aliadoCmb.setSelectedIndex(-1);
+        estadoCmb.setSelectedIndex(-1);
+
+    }
+
+    //Guardar el Evento en Parse
+    private void agregar(final Evento e, final Component c) {
+
+        final ParseObject eventoParse = new ParseObject("Eventos");
+
+        eventoParse.put("lugar", e.getLugar());
+        eventoParse.put("fecha", e.getFecha());
+        eventoParse.put("personas", e.getCantidadDePersonas());
+        eventoParse.put("tipoDeEvento", e.getTipoDeEvento().getCod());
+        //eventoParse.performOperation("cliente", null);
+        //eventoParse.performOperation("aliado", null);
+        eventoParse.put("precio", e.getPrecio());
+
+        if (e.getCosto() != 0) {
+            eventoParse.put("costo", e.getCosto());
+        }
+
+        if (e.getResultado() != 0) {
+            eventoParse.put("resultado", e.getResultado());
+        }
+
+        eventoParse.put("estado", e.getEstadoDeEvento().getCod());
+
+        if (e.getMontoPagado() != 0) {
+            eventoParse.put("montoPagado", e.getMontoPagado());
+        }
+
+        if (e.getMontoRestante() != 0) {
+            eventoParse.put("montoRestante", e.getMontoRestante());
+        }
+
+        eventoParse.saveInBackground(new SaveCallback() {
+
+            @Override
+            public void done(ParseException parseException) {
+
+                if (parseException == null) {
+                    JOptionPane.showMessageDialog(c, //Componente
+                            "Evento Guardado Correctamente", //Mensaje
+                            "Evento Guardado", //Titulo
+                            JOptionPane.INFORMATION_MESSAGE); //Imagen
+                    e.setId(eventoParse.getObjectId());
+                    modeloLista.addElement(e);
+                    System.out.println("Objeto guardado con ID: " + e.getId());
+                } else {
+                    JOptionPane.showMessageDialog(c, //Componente
+                            "Error: " + parseException.toString(), //Mensaje
+                            "Error al guardar el evento", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+
+                }
+            }
+
+        });
+
+    }
+
+    //Edita un evento existente a partir de su ID
+    private void editar(final Evento e, final Component c) {
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Eventos");
+        query.getInBackground(e.getId(), new GetCallback<ParseObject>() {
+
+            @Override
+            public void done(ParseObject eventoParse, ParseException parseException) {
+                if (parseException == null) {
+                    if (eventoParse != null) {
+
+                        eventoParse.put("lugar", e.getLugar());
+                        eventoParse.put("fecha", e.getFecha());
+                        eventoParse.put("personas", e.getCantidadDePersonas());
+                        eventoParse.put("tipoDeEvento", e.getTipoDeEvento().getCod());
+                        //eventoParse.performOperation("cliente", null);
+                        //eventoParse.performOperation("aliado", null);
+                        eventoParse.put("precio", e.getPrecio());
+
+                        if (e.getCosto() != 0) {
+                            eventoParse.put("costo", e.getCosto());
+                        }
+
+                        if (e.getResultado() != 0) {
+                            eventoParse.put("resultado", e.getResultado());
+                        }
+
+                        eventoParse.put("estado", e.getEstadoDeEvento().getCod());
+
+                        if (e.getMontoPagado() != 0) {
+                            eventoParse.put("montoPagado", e.getMontoPagado());
+                        }
+
+                        if (e.getMontoRestante() != 0) {
+                            eventoParse.put("montoRestante", e.getMontoRestante());
+                        }
+
+                        eventoParse.saveInBackground(new SaveCallback() {
+
+                            @Override
+                            public void done(ParseException parseException) {
+
+                                if (parseException == null) {
+                                    JOptionPane.showMessageDialog(c, //Componente
+                                            "Evento Guardado Correctamente", //Mensaje
+                                            "Evento Guardado", //Titulo
+                                            JOptionPane.INFORMATION_MESSAGE); //Imagen
+
+                                    System.out.println("Objeto ID: " + e.getId() + "editado");
+                                } else {
+                                    JOptionPane.showMessageDialog(c, //Componente
+                                            "Error: " + parseException.toString(), //Mensaje
+                                            "Error al guardar el evento", //Titulo
+                                            JOptionPane.WARNING_MESSAGE); //Imagen
+
+                                }
+                            }
+
+                        });
+
+                    } else {
+                        JOptionPane.showMessageDialog(c, //Componente
+                                "No se econtro el evento en la base de datos", //Mensaje
+                                "Evento No Encontrado", //Titulo
+                                JOptionPane.WARNING_MESSAGE); //Imagen
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(c, //Componente
+                            parseException.toString(), //Mensaje
+                            "Error al Editar Evento", //Titulo
+                            JOptionPane.INFORMATION_MESSAGE); //Imagen
+                }
+
+            }
+        });
+
+    }
+    
+    //Elimina un evento existente a partir de su ID
+    private void eliminar(final Evento e, final Component c){
+        
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Eventos");
+        query.getInBackground(e.getId(), new GetCallback<ParseObject>() {
+
+            @Override
+            public void done(ParseObject eventoParse, ParseException parseException) {
+                eventoParse.deleteInBackground(new DeleteCallback() {
+
+                    @Override
+                    public void done(ParseException parseException) {
+                        if(parseException==null){
+                            JOptionPane.showMessageDialog(c, //Componente
+                                            "Evento Eliminado Correctamente", //Mensaje
+                                            "Evento Eliminado", //Titulo
+                                            JOptionPane.INFORMATION_MESSAGE); //Imagen
+                            modeloLista.removeElement(e);
+                        }
+                    }
+                });
+            }
+            
+        });
+        
+    }
+
+    private void cargarTiposDeEventos() {
+        tipoDeEventoCmb.setModel(new DefaultComboBoxModel(TipoDeEvento.values()));
+        tipoDeEventoCmb.setSelectedIndex(-1);
+    }
+
+    private void cargarEstados() {
+        estadoCmb.setModel(new DefaultComboBoxModel(EstadoDeEvento.values()));
+        estadoCmb.setSelectedIndex(-1);
+
+    }
+
+    private void cargarEventos() {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Eventos");
+
+        final Component c = this;
+        query.findInBackground(new FindCallback<ParseObject>() {
+
+            @Override
+            public void done(List<ParseObject> eventosParse, ParseException parseException) {
+                if (parseException == null) {
+
+                    if (eventosParse != null) {
+
+                        for (int i = 0; i < eventosParse.size(); i++) {
+                            ParseObject eventoParse = eventosParse.get(i);
+                            Evento e = new Evento();
+
+                            e.setId(eventoParse.getObjectId());
+                            e.setLugar(eventoParse.getString("lugar"));
+                            e.setFecha(eventoParse.getDate("fecha"));
+                            e.setCantidadDePersonas(eventoParse.getInt("personas"));
+                            e.setTipoDeEvento(TipoDeEvento.getFromInt(eventoParse.getInt("tipoDeEvento")));
+                            //e.setCliente(null);
+                            //e.setAliado(null);
+                            e.setPrecio((float) eventoParse.getDouble("precio"));
+
+                            if (eventoParse.getDouble("costo") != 0) {
+                                e.setCosto((float) eventoParse.getDouble("costo"));
+                            }
+
+                            if (eventoParse.getDouble("resultado") != 0) {
+                                e.setResultado((float) eventoParse.getDouble("resultado"));
+                            }
+
+                            e.setEstadoDeEvento(EstadoDeEvento.getFromInt(
+                                    eventoParse.getInt("estado")));
+
+                            if (eventoParse.getDouble("montoPagado") != 0) {
+                                e.setMontoPagado((float) eventoParse.getDouble("montoPagado"));
+                            }
+
+                            if (eventoParse.getDouble("montoRestante") != 0) {
+                                e.setMontoRestante((float) eventoParse.getDouble("montoRestante"));
+                            }
+
+                            modeloLista.addElement(e);
+
+                        }
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(c, //Componente
+                            "Error: " + parseException.toString(), //Mensaje
+                            "Error al cargar los eventos", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
+            }
+        });
+
+    }
+
+    //Validar los campos
+    private boolean validarForm() {
+
+        //Validar que el lugar no esté vacio
+        if (lugarTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "El lugar no puede estar vacio",
+                    "Completar Lugar", JOptionPane.WARNING_MESSAGE);
+            lugarTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que la fecha no esté vacía
+        if (fechaTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "La fecha no puede estar vacia",
+                    "Completar Fecha", JOptionPane.WARNING_MESSAGE);
+            fechaTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que la fecha tenga formato dd/MM/yyyy
+        try {
+            General.formatoFecha.parse(fechaTxt.getText());
+        } catch (java.text.ParseException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "El formato de fcha de ser DD/MM/AAAA",
+                    "Mal formato de fecha", JOptionPane.WARNING_MESSAGE);
+            fechaTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que la cantidad de personas no esté vacía
+        if (personasTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "La cantidad de personas no puede estar vacia",
+                    "Completar Cant de Personas", JOptionPane.WARNING_MESSAGE);
+            personasTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que la cantidad de personas sea un numero entero
+        try {
+            Integer.parseInt(personasTxt.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "La cantidad de personas debe ser un numero entero",
+                    "Corregir Cant de Personas ", JOptionPane.WARNING_MESSAGE);
+            personasTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que haya un Tipo de Evento Seleccionado
+        if (tipoDeEventoCmb.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Debe seleccionar un Tipo de Evento",
+                    "Seleccionar Tipo de Evento ", JOptionPane.WARNING_MESSAGE);
+            tipoDeEventoCmb.requestFocus();
+            return false;
+        }
+
+        //Validar que haya un cliente seleccionado
+        if (clienteCmb.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Debe seleccionar un Cliente",
+                    "Seleccionar Cliente ", JOptionPane.WARNING_MESSAGE);
+            clienteCmb.requestFocus();
+            return false;
+        }
+
+        //Validar que, si hay costo, sea un numero decimal
+        if (!costoTxt.getText().equals("")) {
+            try {
+                Float.parseFloat(costoTxt.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this,
+                        "El costo debe ser un numero decimal",
+                        "Corregir Costo", JOptionPane.WARNING_MESSAGE);
+                costoTxt.requestFocus();
+                return false;
+            }
+        }
+
+        //Validar que, si hay resultado, sea un numero decimal
+        if (!resultadoTxt.getText().equals("")) {
+            try {
+                Float.parseFloat(resultadoTxt.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this,
+                        "El resultado debe ser un numero decimal",
+                        "Corregir Resultado", JOptionPane.WARNING_MESSAGE);
+                resultadoTxt.requestFocus();
+                return false;
+            }
+        }
+
+        //Validar que, si hay monto pagado, sea un numero decimal
+        if (!pagadoTxt.getText().equals("")) {
+            try {
+                Float.parseFloat(pagadoTxt.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this,
+                        "El monto pagado debe ser un numero decimal",
+                        "Corregir Monto Pagado", JOptionPane.WARNING_MESSAGE);
+                pagadoTxt.requestFocus();
+                return false;
+            }
+        }
+
+        //Validar que, si hay adeudado, sea un numero decimal
+        if (!adeudadoTxt.getText().equals("")) {
+            try {
+                Float.parseFloat(adeudadoTxt.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this,
+                        "El monto adeudado debe ser un numero decimal",
+                        "Corregir Monto Adeudado", JOptionPane.WARNING_MESSAGE);
+                adeudadoTxt.requestFocus();
+                return false;
+            }
+        }
+
+        //Validar que el precio no este vacio
+        if (precioTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "El precio no puede estar vacia. Presione el boton Cotizar"
+                    + "para obtener el precio o ingreselo manualmente.",
+                    "Cotizar", JOptionPane.WARNING_MESSAGE);
+            precioTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que el precio sea un numero decimal
+        try {
+            Float.parseFloat(precioTxt.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "El precio debe ser un numero decimal",
+                    "Corregir Precio ", JOptionPane.WARNING_MESSAGE);
+            precioTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que haya un Estado seleccionado
+        if (estadoCmb.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this,
+                    "Debe seleccionar un Estado para el evento",
+                    "Seleccionar Estado", JOptionPane.WARNING_MESSAGE);
+            tipoDeEventoCmb.requestFocus();
+            return false;
+        }
+
+        return true;
+
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField adeudadoTxt;
+    private javax.swing.JComboBox aliadoCmb;
+    private javax.swing.JButton cancelarBtn;
+    private javax.swing.JComboBox clienteCmb;
+    private javax.swing.JButton consumidoBtn;
+    private javax.swing.JTextField costoTxt;
+    private javax.swing.JButton cotizarBtn;
+    private javax.swing.JButton editarBtn;
+    private javax.swing.JButton eliminarBtn;
+    private javax.swing.JComboBox estadoCmb;
+    private javax.swing.JList eventosList;
     private javax.swing.JTextField fechaTxt;
+    private javax.swing.JButton generarOrdenDeCompraBtn;
+    private javax.swing.JButton generarPDFBtn;
+    private javax.swing.JButton guardarBtn;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton10;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
-    private javax.swing.JComboBox jComboBox1;
-    private javax.swing.JComboBox jComboBox2;
-    private javax.swing.JComboBox jComboBox3;
-    private javax.swing.JComboBox jComboBox4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -458,7 +1176,6 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -466,12 +1183,14 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
     private javax.swing.JTextField lugarTxt;
+    private javax.swing.JButton nuevoAliadoBtn;
+    private javax.swing.JButton nuevoClienteBtn;
+    private javax.swing.JTextField pagadoTxt;
     private javax.swing.JTextField personasTxt;
+    private javax.swing.JTextField precioTxt;
+    private javax.swing.JTextField resultadoTxt;
+    private javax.swing.JComboBox tipoDeEventoCmb;
     // End of variables declaration//GEN-END:variables
+
 }

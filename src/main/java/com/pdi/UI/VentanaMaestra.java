@@ -11,11 +11,15 @@ import java.awt.Dimension;
  *
  * @author Marcos Sastre
  */
+
 public class VentanaMaestra extends javax.swing.JFrame {
 
     /**
      * Creates new form VentanaMaestra
      */
+    
+    EventosVentana eventosCurrent;
+    
     public VentanaMaestra() {
         initComponents();
     }
@@ -122,6 +126,11 @@ public class VentanaMaestra extends javax.swing.JFrame {
         jMenu2.setText("Contabilidad");
 
         jMenuItem7.setText("Flujo de Caja");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem7);
 
         jMenuItem8.setText("Patrimonio");
@@ -184,6 +193,7 @@ public class VentanaMaestra extends javax.swing.JFrame {
             v.setSize(desktopDim);
             System.out.println(desktopDim);
             v.setVisible(true);
+            eventosCurrent = v;
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
@@ -226,10 +236,13 @@ public class VentanaMaestra extends javax.swing.JFrame {
             jDesktopPane1.add(v);
             Dimension desktopDim = jDesktopPane1.getSize();
             v.setSize(desktopDim);
-            System.out.println(desktopDim);
             v.setVisible(true);
          }
     }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     /**
      * @param args the command line arguments

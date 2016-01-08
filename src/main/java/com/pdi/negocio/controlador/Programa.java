@@ -14,6 +14,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import com.pdi.util.General;
+import java.util.Date;
 
 /**
  *
@@ -25,6 +27,7 @@ public class Programa {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        //Establece la vista de sistema como layout
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
@@ -37,7 +40,11 @@ public class Programa {
             Logger.getLogger(Programa.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        
+        //Inicializa Parse
+        Parse.initialize("vlggVnYS02godcofnSC4limZG7XMOc5I4VMcSz0B", //App ID
+                "uotLx4R6kPfs9PNLXnxDdzyAC7NiQmhaG4hL7BIL"); //REST API key
+
+        //Abre la ventana maestra
         VentanaMaestra v = new VentanaMaestra();
         v.setSize(1024, 650);
         v.setVisible(true);

@@ -7,14 +7,15 @@ package com.pdi.negocio.entidades.finales;
 
 import com.pdi.negocio.enums.EstadoDeEvento;
 import com.pdi.negocio.enums.TipoDeEvento;
+import com.pdi.util.General;
 import java.util.Date;
 
 /**
  *
  * @author Marcos Sastre
  */
-class Evento {
-    private int id;
+public class Evento {
+    private String id;
     private Date fecha;
     private String lugar;
     private int cantidadDePersonas;
@@ -33,7 +34,7 @@ class Evento {
     public Evento() {
     }
 
-    public Evento(int id, Date fecha, String lugar, int cantidadDePersonas,
+    public Evento(String id, Date fecha, String lugar, int cantidadDePersonas,
             TipoDeEvento tipoDeEvento, Aliado aliado, Cliente cliente, 
             float precio, float costo, float resultado, float montoPagado, 
             float montoRestante, EstadoDeEvento estadoDeEvento) {
@@ -70,11 +71,11 @@ class Evento {
       
     //Getters y Setters
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -173,6 +174,14 @@ class Evento {
     public void setEstadoDeEvento(EstadoDeEvento estadoDeEvento) {
         this.estadoDeEvento = estadoDeEvento;
     }
+
+    @Override
+    public String toString() {
+        return "Fecha: " + General.formatoFecha.format(fecha) 
+                + "/ Cant: " + cantidadDePersonas
+                + "/ Precio: $" + precio; 
+    }
+    
     
     
            
