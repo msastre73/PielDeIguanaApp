@@ -6,6 +6,7 @@
 package com.pdi.UI;
 
 import com.backendless.Backendless;
+import com.backendless.BackendlessCollection;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import javax.swing.DefaultListModel;
@@ -45,8 +46,8 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         //Carga Todos los Datos
         cargarEventos();
         cargarTiposDeEventos();
-        //cargarClientes();
-        //cargarAliados();
+        //TODO: cargarClientes();
+        //TODO: cargarAliados();
         cargarEstados();
         System.out.println("Todos los elementos fueron cargados");
 
@@ -494,7 +495,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         generarOrdenDeCompraBtn.setEnabled(false);
 
         cargandoTxt.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        cargandoTxt.setText("test");
+        cargandoTxt.setToolTipText("");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -768,17 +769,21 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         Backendless.Persistence.save(e, new AsyncCallback<Evento>() {
 
             public void handleResponse(Evento eventoGuardado) {
+                cargandoTxt.setText("");
                 JOptionPane.showMessageDialog(c, //Componente
                         "Evento Guardado Correctamente", //Mensaje
                         "Evento Guardado", //Titulo
                         JOptionPane.INFORMATION_MESSAGE); //Imagen
                 e.setObjectId(eventoGuardado.getObjectId());
+                e.setUpdated(eventoGuardado.getUpdated());
+                e.setCreated(eventoGuardado.getCreated());
                 modeloLista.addElement(e);
                 eventosList.setSelectedValue(e, true);
                 System.out.println("Objeto guardado con ID: " + e.getObjectId());
             }
 
             public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
                 JOptionPane.showMessageDialog(c, //Componente
                         "Error: " + bf.getMessage(), //Mensaje
                         "Error al guardar el evento", //Titulo
@@ -786,139 +791,34 @@ public class EventosVentana extends javax.swing.JInternalFrame {
             }
 
         });
-        final ParseObject eventoParse = new ParseObject("Eventos");
-
-        eventoParse.put("lugar", e.getLugar());
-        eventoParse.put("fecha", e.getFecha());
-        eventoParse.put("personas", e.getCantidadDePersonas());
-        eventoParse.put("tipoDeEvento", e.getTipoDeEvento().getCod());
-        //eventoParse.performOperation("cliente", null);
-        //eventoParse.performOperation("aliado", null);
-        eventoParse.put("precio", e.getPrecio());
-
-        if (e.getCosto() != 0) {
-            eventoParse.put("costo", e.getCosto());
-        }
-
-        if (e.getResultado() != 0) {
-            eventoParse.put("resultado", e.getResultado());
-        }
-
-        eventoParse.put("estado", e.getEstadoDeEvento().getCod());
-
-        if (e.getMontoPagado() != 0) {
-            eventoParse.put("montoPagado", e.getMontoPagado());
-        }
-
-        if (e.getMontoRestante() != 0) {
-            eventoParse.put("montoRestante", e.getMontoRestante());
-        }
-
-        eventoParse.saveInBackground(new SaveCallback() {
-
-            @Override
-            public void done(ParseException parseException) {
-                cargandoTxt.setText("");
-
-                if (parseException == null) {
-                    JOptionPane.showMessageDialog(c, //Componente
-                            "Evento Guardado Correctamente", //Mensaje
-                            "Evento Guardado", //Titulo
-                            JOptionPane.INFORMATION_MESSAGE); //Imagen
-                    e.setId(eventoParse.getObjectId());
-                    modeloLista.addElement(e);
-                    eventosList.setSelectedValue(e, true);
-                    System.out.println("Objeto guardado con ID: " + e.getId());
-                } else {
-                    JOptionPane.showMessageDialog(c, //Componente
-                            "Error: " + parseException.toString(), //Mensaje
-                            "Error al guardar el evento", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-
-                }
-            }
-
-        });
 
     }
 
-    //Edita un evento existente a partir de su ID
+    //Edita un evento existente (El Evento e tiene que contar con objectID)
     private void editar(final Evento e, final Component c) {
         cargandoTxt.setText("Editando evento...");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Eventos");
-        query.getInBackground(e.getId(), new GetCallback<ParseObject>() {
 
-            @Override
-            public void done(ParseObject eventoParse, ParseException parseException) {
-                if (parseException == null) {
-                    if (eventoParse != null) {
+        Backendless.Persistence.save(e, new AsyncCallback<Evento>() {
 
-                        eventoParse.put("lugar", e.getLugar());
-                        eventoParse.put("fecha", e.getFecha());
-                        eventoParse.put("personas", e.getCantidadDePersonas());
-                        eventoParse.put("tipoDeEvento", e.getTipoDeEvento().getCod());
-                        //eventoParse.performOperation("cliente", null);
-                        //eventoParse.performOperation("aliado", null);
-                        eventoParse.put("precio", e.getPrecio());
+            public void handleResponse(Evento eventoGuardado) {
+                cargandoTxt.setText("");
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Evento Editado Correctamente", //Mensaje
+                        "Evento Guardado", //Titulo
+                        JOptionPane.INFORMATION_MESSAGE); //Imagen
 
-                        if (e.getCosto() != 0) {
-                            eventoParse.put("costo", e.getCosto());
-                        }
-
-                        if (e.getResultado() != 0) {
-                            eventoParse.put("resultado", e.getResultado());
-                        }
-
-                        eventoParse.put("estado", e.getEstadoDeEvento().getCod());
-
-                        if (e.getMontoPagado() != 0) {
-                            eventoParse.put("montoPagado", e.getMontoPagado());
-                        }
-
-                        if (e.getMontoRestante() != 0) {
-                            eventoParse.put("montoRestante", e.getMontoRestante());
-                        }
-
-                        eventoParse.saveInBackground(new SaveCallback() {
-
-                            @Override
-                            public void done(ParseException parseException) {
-                                cargandoTxt.setText("");
-
-                                if (parseException == null) {
-                                    JOptionPane.showMessageDialog(c, //Componente
-                                            "Evento Editado Correctamente", //Mensaje
-                                            "Evento Guardado", //Titulo
-                                            JOptionPane.INFORMATION_MESSAGE); //Imagen
-
-                                    System.out.println("Objeto ID: " + e.getId() + "editado");
-                                    eventosList.setSelectedValue(e, true);
-                                } else {
-                                    JOptionPane.showMessageDialog(c, //Componente
-                                            parseException.toString(), //Mensaje
-                                            "Error al editar el evento", //Titulo
-                                            JOptionPane.WARNING_MESSAGE); //Imagen
-
-                                }
-                            }
-
-                        });
-
-                    } else {
-                        JOptionPane.showMessageDialog(c, //Componente
-                                "No se econtro el evento en la base de datos", //Mensaje
-                                "Evento No Encontrado", //Titulo
-                                JOptionPane.WARNING_MESSAGE); //Imagen
-                    }
-
-                } else {
-                    JOptionPane.showMessageDialog(c, //Componente
-                            parseException.toString(), //Mensaje
-                            "Error al Editar Evento", //Titulo
-                            JOptionPane.INFORMATION_MESSAGE); //Imagen
-                }
-
+                System.out.println("Objeto ID: " + e.getObjectId() + " editado");
+                eventosList.setSelectedValue(e, true);
             }
+
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Error: " + bf.getMessage(), //Mensaje
+                        "Error al editar el evento", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen
+            }
+
         });
 
     }
@@ -926,36 +826,27 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     //Elimina un evento existente a partir de su ID
     private void eliminar(final Evento e, final Component c) {
         cargandoTxt.setText("Eliminando evento...");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Eventos");
-        query.getInBackground(e.getId(), new GetCallback<ParseObject>() {
 
-            @Override
-            public void done(ParseObject eventoParse, ParseException parseException) {
+        Backendless.Persistence.of(Evento.class).remove(e, new AsyncCallback<Long>() {
 
-                if (parseException == null) {
-                    eventoParse.deleteInBackground(new DeleteCallback() {
-
-                        @Override
-                        public void done(ParseException parseException) {
-                            cargandoTxt.setText("");
-                            if (parseException == null) {
-                                JOptionPane.showMessageDialog(c, //Componente
-                                        "Evento Eliminado Correctamente", //Mensaje
-                                        "Evento Eliminado", //Titulo
-                                        JOptionPane.INFORMATION_MESSAGE); //Imagen
-                                modeloLista.removeElement(e);
-                            }
-                        }
-                    });
-                } else {
-                    JOptionPane.showMessageDialog(c, //Componente
-                            parseException.toString(), //Mensaje
-                            "Error al eliminar el Evento", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-                }
+            public void handleResponse(Long t) {
+                cargandoTxt.setText("");
+                System.out.println("Evento con ID: " + e.getObjectId() + " eliminado");
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Evento Eliminado Correctamente", //Mensaje
+                        "Evento Eliminado", //Titulo
+                        JOptionPane.INFORMATION_MESSAGE); //Imagen
+                modeloLista.removeElement(e);
 
             }
 
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Error: " + bf.getMessage(), //Mensaje
+                        "Error al eliminar el Evento", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen
+            }
         });
 
     }
@@ -973,62 +864,36 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
     private void cargarEventos() {
         cargandoTxt.setText("Cargando eventos...");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Eventos");
+        Backendless.Persistence.of(Evento.class).find(new AsyncCallback<BackendlessCollection<Evento>>() {
 
-        final Component c = this;
-        query.findInBackground(new FindCallback<ParseObject>() {
-
-            @Override
-            public void done(List<ParseObject> eventosParse, ParseException parseException) {
+            public void handleResponse(BackendlessCollection<Evento> eventosBackendless) {
                 cargandoTxt.setText("");
-                if (parseException == null) {
-
-                    if (eventosParse != null) {
-
-                        for (int i = 0; i < eventosParse.size(); i++) {
-                            ParseObject eventoParse = eventosParse.get(i);
-                            Evento e = new Evento();
-
-                            e.setId(eventoParse.getObjectId());
-                            e.setLugar(eventoParse.getString("lugar"));
-                            e.setFecha(eventoParse.getDate("fecha"));
-                            e.setCantidadDePersonas(eventoParse.getInt("personas"));
-                            e.setTipoDeEvento(TipoDeEvento.getFromInt(eventoParse.getInt("tipoDeEvento")));
-                            //e.setCliente(null);
-                            //e.setAliado(null);
-                            e.setPrecio((float) eventoParse.getDouble("precio"));
-
-                            if (eventoParse.getDouble("costo") != 0) {
-                                e.setCosto((float) eventoParse.getDouble("costo"));
-                            }
-
-                            if (eventoParse.getDouble("resultado") != 0) {
-                                e.setResultado((float) eventoParse.getDouble("resultado"));
-                            }
-
-                            e.setEstadoDeEvento(EstadoDeEvento.getFromInt(
-                                    eventoParse.getInt("estado")));
-
-                            if (eventoParse.getDouble("montoPagado") != 0) {
-                                e.setMontoPagado((float) eventoParse.getDouble("montoPagado"));
-                            }
-
-                            if (eventoParse.getDouble("montoRestante") != 0) {
-                                e.setMontoRestante((float) eventoParse.getDouble("montoRestante"));
-                            }
-
-                            modeloLista.addElement(e);
-
-                        }
+                if (eventosBackendless != null) {
+                    List<Evento> eventosList = eventosBackendless.getData();
+                    for (int i = 0; i < eventosList.size(); i++) {
+                        Evento e = eventosList.get(i);
+                        modeloLista.addElement(e);
                     }
 
-                } else {
-                    JOptionPane.showMessageDialog(c, //Componente
-                            parseException.toString(), //Mensaje
-                            "Error al cargar los eventos", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
                 }
             }
+
+            public void handleFault(BackendlessFault bf) {
+
+                cargandoTxt.setText("");
+                //Si aun no se cargaron objetos de esta clase, arroja un error
+                //conocido por esto. En caso de que se trate de este error el que
+                //ocasiono la BackendlessFault esta todo en orden, por lo tanto se
+                //saltea.
+                if (!bf.getCode().equals(General.COD_SIN_CLASE)) {
+                JOptionPane.showMessageDialog(EventosVentana.this, //Componente
+                        bf.getMessage(), //Mensaje
+                        "Error al cargar los eventos", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen
+            }
+
+            }
+
         });
 
     }

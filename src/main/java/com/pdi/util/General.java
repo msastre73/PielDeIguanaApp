@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 
 public class General {
     
+     public static String COD_SIN_CLASE = "1009";
     
     public static SimpleDateFormat formatoFecha = 
             new SimpleDateFormat("dd/MM/yyyy");

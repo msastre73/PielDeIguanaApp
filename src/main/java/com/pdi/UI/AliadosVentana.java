@@ -5,19 +5,16 @@
  */
 package com.pdi.UI;
 
+import com.backendless.Backendless;
+import com.backendless.BackendlessCollection;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
 import com.pdi.negocio.entidades.finales.Aliado;
 import com.pdi.util.General;
 import java.awt.Component;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import org.parse4j.ParseException;
-import org.parse4j.ParseObject;
-import org.parse4j.ParseQuery;
-import org.parse4j.callback.DeleteCallback;
-import org.parse4j.callback.FindCallback;
-import org.parse4j.callback.GetCallback;
-import org.parse4j.callback.SaveCallback;
 
 /**
  *
@@ -30,6 +27,7 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
      */
     //Atrib para manejar si hay una ventana abierta de este tipo
     public static boolean abierta = false;
+
     DefaultListModel modeloLista = new DefaultListModel();
 
     public AliadosVentana() {
@@ -387,17 +385,17 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_cancelarBtnActionPerformed
 
     private void editarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarBtnActionPerformed
-       habilitarDetalles();
+        habilitarDetalles();
     }//GEN-LAST:event_editarBtnActionPerformed
 
     private void eliminarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarBtnActionPerformed
         Aliado a = (Aliado) aliadosList.getSelectedValue();
-        
+
         //Mensaje de Confirmacion
         int rta = JOptionPane.showConfirmDialog(this,
                 "Confirma que quiere eliminar este aliado?:\n" + a.toString(),
                 "Confirmar eliminacion", JOptionPane.YES_NO_OPTION);
-        
+
         if (rta == JOptionPane.NO_OPTION) {
             return;
         } else {
@@ -405,17 +403,17 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
             limpiarForm();
             editarBtn.setEnabled(false);
             eliminarBtn.setEnabled(false);
-            
+
         }
-        
-        
+
+
     }//GEN-LAST:event_eliminarBtnActionPerformed
 
     private void aliadosListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aliadosListMouseClicked
-         //Activa los botones correspondientes
+        //Activa los botones correspondientes
         editarBtn.setEnabled(true);
         eliminarBtn.setEnabled(true);
-        
+
         //Obtiene el item seleccionado y completa los campos
         Aliado a = (Aliado) aliadosList.getSelectedValue();
 
@@ -423,11 +421,11 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
         apellidoTxt.setText(a.getApellido());
         mailTxt.setText(a.getMail());
 
-        if (a.getComisionPorcentaje()!= 0) {
+        if (a.getComisionPorcentaje() != 0) {
             comisionTxt.setText(Float.toString(a.getComisionPorcentaje()));
         }
-        
-        if (a.getComisionMonto()!= 0) {
+
+        if (a.getComisionMonto() != 0) {
             comisionAcumuladaTxt.setText(Float.toString(a.getComisionMonto()));
         }
 
@@ -438,188 +436,117 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
         abierta = false;
     }//GEN-LAST:event_formInternalFrameClosed
 
-    private void agregar(final Aliado a, final Component comp) {
+    private void agregar(final Aliado a, final Component c) {
         cargandoTxt.setText("Guardando aliado...");
+        Backendless.Persistence.save(a, new AsyncCallback<Aliado>() {
 
-        final ParseObject aliadoParse = new ParseObject("Aliados");
-
-        aliadoParse.put("nombre", a.getNombre());
-        aliadoParse.put("apellido", a.getApellido());
-        aliadoParse.put("mail", a.getMail());
-
-        if (a.getComisionMonto() != 0) {
-            aliadoParse.put("comisionMonto", a.getComisionMonto());
-        }
-
-        if (a.getComisionPorcentaje() != 0) {
-            aliadoParse.put("comisionPorcentaje", a.getComisionPorcentaje());
-        }
-
-        //TODO: poner eventos
-        aliadoParse.saveInBackground(new SaveCallback() {
-
-            @Override
-            public void done(ParseException parseException) {
+            public void handleResponse(Aliado aliadoGuardado) {
                 cargandoTxt.setText("");
-                if (parseException == null) {
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            "Aliado Guardado Correctamente", //Mensaje
-                            "Aliado Guardado", //Titulo
-                            JOptionPane.INFORMATION_MESSAGE); //Imagen
-                    a.setId(aliadoParse.getObjectId());
-                    modeloLista.addElement(a);
-                    aliadosList.setSelectedValue(a, true);
-                    System.out.println("Objeto guardado con ID: " + a.getId());
-                } else {
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            "Error: " + parseException.toString(), //Mensaje
-                            "Error al guardar el aliado", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-
-                }
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Aliado Guardado Correctamente", //Mensaje
+                        "Aliado Guardado", //Titulo
+                        JOptionPane.INFORMATION_MESSAGE); //Imagen
+                a.setObjectId(aliadoGuardado.getObjectId());
+                a.setUpdated(aliadoGuardado.getUpdated());
+                a.setCreated(aliadoGuardado.getCreated());
+                modeloLista.addElement(a);
+                aliadosList.setSelectedValue(a, true);
+                System.out.println("Objeto guardado con ID: " + a.getObjectId());
             }
-        });
 
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Error: " + bf.getMessage(), //Mensaje
+                        "Error al guardar el aliado", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen  
+
+            }
+
+        });
     }
 
-    private void editar(final Aliado a, final Component comp) {
+    private void editar(final Aliado a, final Component c) {
         cargandoTxt.setText("Editando aliado...");
-        ParseQuery query = ParseQuery.getQuery("Aliados");
-        query.getInBackground(a.getId(), new GetCallback() {
+        Backendless.Persistence.save(a, new AsyncCallback<Aliado>() {
 
-            @Override
-            public void done(ParseObject aliadoParse, ParseException parseException) {
+            public void handleResponse(Aliado aliadoGuardado) {
                 cargandoTxt.setText("");
-                if (parseException == null) {
-                    if (aliadoParse != null) {
-                        aliadoParse.put("nombre", a.getNombre());
-                        aliadoParse.put("apellido", a.getApellido());
-                        aliadoParse.put("mail", a.getMail());
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Aliado Editado Correctamente", //Mensaje
+                        "Aliado Guardado", //Titulo
+                        JOptionPane.INFORMATION_MESSAGE); //Imagen
+                System.out.println("Objeto ID: " + a.getObjectId() + " editado");
+                aliadosList.setSelectedValue(a, true);
 
-                        if (a.getComisionMonto() != 0) {
-                            aliadoParse.put("comisionMonto", a.getComisionMonto());
-                        }
-
-                        if (a.getComisionPorcentaje() != 0) {
-                            aliadoParse.put("comisionPorcentaje", a.getComisionPorcentaje());
-                        }
-                        //TODO: poner eventos
-                        aliadoParse.saveInBackground(new SaveCallback() {
-
-                            @Override
-                            public void done(ParseException parseException) {
-                                if (parseException == null) {
-                                    JOptionPane.showMessageDialog(comp, //Componente
-                                            "Aliado Editado Correctamente", //Mensaje
-                                            "Aliado Editado", //Titulo
-                                            JOptionPane.INFORMATION_MESSAGE); //Imagen
-                                    aliadosList.setSelectedValue(a, true);
-                                    System.out.println("Objeto ID: " + a.getId() + "editado");
-                                } else {
-                                    JOptionPane.showMessageDialog(comp, //Componente
-                                            parseException.toString(), //Mensaje
-                                            "Error al editar el aliado", //Titulo
-                                            JOptionPane.WARNING_MESSAGE); //Imagen
-
-                                }
-                            }
-                        }
-                        );
-
-                    } else {
-                        JOptionPane.showMessageDialog(comp, //Componente
-                                "No se econtro el aliado en la base de datos", //Mensaje
-                                "Aliado No Encontrado", //Titulo
-                                JOptionPane.WARNING_MESSAGE); //Imagen
-                    }
-
-                } else {
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            parseException.toString(), //Mensaje
-                            "Error al Editar Aliado", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-                }
             }
+
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Error: " + bf.getMessage(), //Mensaje
+                        "Error al editar el aliado", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen
+            }
+
         });
+
     }
-    
-    private void eliminar(final Aliado a, final Component comp){
+
+    private void eliminar(final Aliado a, final Component c) {
         cargandoTxt.setText("Eliminando aliado...");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Aliados");
+        Backendless.Persistence.of(Aliado.class).remove(a, new AsyncCallback<Long>() {
 
-        query.getInBackground(a.getId(), new GetCallback<ParseObject>() {
+            public void handleResponse(Long t) {
+                cargandoTxt.setText("");
+                System.out.println("Aliado con ID: " + a.getObjectId() + " eliminado");
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Aliado Eliminado Correctamente", //Mensaje
+                        "Aliado Eliminado", //Titulo
+                        JOptionPane.INFORMATION_MESSAGE); //Imagen
+                modeloLista.removeElement(a);
+            }
 
-            @Override
-            public void done(ParseObject aliadoParse, ParseException parseException) {
-                if (parseException == null) {
-                    aliadoParse.deleteInBackground(new DeleteCallback() {
-
-                        @Override
-                        public void done(ParseException parseException) {
-                            cargandoTxt.setText("");
-                            JOptionPane.showMessageDialog(comp, //Componente
-                                    "Aliado Eliminado Correctamente", //Mensaje
-                                    "Aliado Eliminado", //Titulo
-                                    JOptionPane.INFORMATION_MESSAGE); //Imagen
-                            modeloLista.removeElement(a);
-                        }
-                    });
-
-                } else {
-                    cargandoTxt.setText("");
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            parseException.toString(), //Mensaje
-                            "Error al eliminar el Aliado", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-                }
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Error: " + bf.getMessage(), //Mensaje
+                        "Error al eliminar el Aliado", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen  
             }
         });
     }
 
     private void cargarAliados() {
         cargandoTxt.setText("Cargando aliados...");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Aliados");
 
-        final Component comp = this;
+        Backendless.Persistence.of(Aliado.class).find(new AsyncCallback<BackendlessCollection<Aliado>>() {
 
-        query.findInBackground(new FindCallback<ParseObject>() {
-
-            @Override
-            public void done(List<ParseObject> aliadosParse, ParseException parseException) {
+            public void handleResponse(BackendlessCollection<Aliado> aliadosBackendless) {
                 cargandoTxt.setText("");
-                if (parseException == null) {
-
-                    if (aliadosParse != null) {
-
-                        for (int i = 0; i < aliadosParse.size(); i++) {
-                            ParseObject aliadoParse = aliadosParse.get(i);
-                            Aliado a = new Aliado();
-
-                            a.setId(aliadoParse.getObjectId());
-                            a.setNombre(aliadoParse.getString("nombre"));
-                            a.setApellido(aliadoParse.getString("apellido"));
-                            a.setMail(aliadoParse.getString("mail"));
-                            //TODO: cargar eventos
-
-                            if (aliadoParse.getDouble("comisionMonto") != 0) {
-                                a.setComisionMonto((float) aliadoParse.getDouble("comisionMonto"));
-
-                            }
-                            
-                            if (aliadoParse.getDouble("comisionPorcentaje") != 0) {
-                                a.setComisionPorcentaje((float) aliadoParse.getDouble("comisionPorcentaje"));
-
-                            }
-
-                            modeloLista.addElement(a);
-                        }
+                if (aliadosBackendless != null) {
+                    List<Aliado> aliadosList = aliadosBackendless.getData();
+                    for (int i = 0; i < aliadosList.size(); i++) {
+                        Aliado e = aliadosList.get(i);
+                        modeloLista.addElement(e);
                     }
+                }
+            }
 
-                } else {
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            parseException.toString(), //Mensaje
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+
+                //Si aun no se cargaron objetos de esta clase, arroja un error
+                //conocido por esto. En caso de que se trate de este error el que
+                //ocasiono la BackendlessFault esta todo en orden, por lo tanto se
+                //saltea.
+                if (!bf.getCode().equals(General.COD_SIN_CLASE)) {
+                    JOptionPane.showMessageDialog(AliadosVentana.this, //Componente
+                            bf.getMessage() + " codigo: " + bf.getCode(), //Mensaje
                             "Error al cargar los aliados", //Titulo
                             JOptionPane.WARNING_MESSAGE); //Imagen
+
                 }
             }
         });
@@ -703,7 +630,7 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
         cancelarBtn.setEnabled(true);
 
     }
-    
+
     private void deshabilitarDetalles() {
         nombreTxt.setEnabled(false);
         apellidoTxt.setEnabled(false);
@@ -725,8 +652,8 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
         eventosList.removeAll();
         aliadosList.clearSelection();
     }
-    
-    
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList aliadosList;
     private javax.swing.JTextField apellidoTxt;

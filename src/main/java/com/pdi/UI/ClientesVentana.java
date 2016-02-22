@@ -5,19 +5,16 @@
  */
 package com.pdi.UI;
 
+import com.backendless.Backendless;
+import com.backendless.BackendlessCollection;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
 import com.pdi.negocio.entidades.finales.Cliente;
 import com.pdi.util.General;
 import java.awt.Component;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import org.parse4j.ParseException;
-import org.parse4j.ParseObject;
-import org.parse4j.ParseQuery;
-import org.parse4j.callback.DeleteCallback;
-import org.parse4j.callback.FindCallback;
-import org.parse4j.callback.GetCallback;
-import org.parse4j.callback.SaveCallback;
 
 /**
  *
@@ -340,8 +337,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
             c.setNombre(nombreTxt.getText());
             c.setApellido(apellidoTxt.getText());
             c.setMail(mailTxt.getText());
-            
-            
+
             if (!descuentoTxt.getText().equals("")) {
                 c.setDescuento(Float.parseFloat(descuentoTxt.getText()));
             }
@@ -352,7 +348,6 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
                 editar(c, this);
             }
 
-            
             deshabilitarDetalles();
 
         }
@@ -399,12 +394,12 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
 
     private void eliminarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarBtnActionPerformed
         Cliente c = (Cliente) clientesList.getSelectedValue();
-        
+
         //Mensaje de Confirmacion
         int rta = JOptionPane.showConfirmDialog(this,
                 "Confirma que quiere eliminar este cliente?:\n" + c.toString(),
                 "Confirmar eliminacion", JOptionPane.YES_NO_OPTION);
-        
+
         if (rta == JOptionPane.NO_OPTION) {
             return;
         } else {
@@ -412,9 +407,9 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
             limpiarForm();
             editarBtn.setEnabled(false);
             eliminarBtn.setEnabled(false);
-            
+
         }
-        
+
     }//GEN-LAST:event_eliminarBtnActionPerformed
 
     private void habilitarDetalles() {
@@ -449,130 +444,83 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
 
     private void agregar(final Cliente c, final Component comp) {
         cargandoTxt.setText("Guardando cliente...");
-        final ParseObject clienteParse = new ParseObject("Clientes");
+        Backendless.Persistence.save(c, new AsyncCallback<Cliente>() {
 
-        clienteParse.put("nombre", c.getNombre());
-        clienteParse.put("apellido", c.getApellido());
-        clienteParse.put("mail", c.getMail());
-
-        if (c.getDescuento() != 0) {
-            clienteParse.put("descuento", c.getDescuento());
-        }
-
-        //TODO: poner eventos
-        clienteParse.saveInBackground(new SaveCallback() {
-
-            @Override
-            public void done(ParseException parseException) {
+            public void handleResponse(Cliente clienteGuardado) {
                 cargandoTxt.setText("");
-                if (parseException == null) {
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            "Cliente Guardado Correctamente", //Mensaje
-                            "Cliente Guardado", //Titulo
-                            JOptionPane.INFORMATION_MESSAGE); //Imagen
-                    c.setId(clienteParse.getObjectId());
-                    modeloLista.addElement(c);
-                    clientesList.setSelectedValue(c, true);
-                    System.out.println("Objeto guardado con ID: " + c.getId());
-                } else {
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            "Error: " + parseException.toString(), //Mensaje
-                            "Error al guardar el cliente", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-
-                }
+                JOptionPane.showMessageDialog(comp, //Componente
+                        "Cliente Guardado Correctamente", //Mensaje
+                        "Cliente Guardado", //Titulo
+                        JOptionPane.INFORMATION_MESSAGE); //Imagen
+                c.setObjectId(clienteGuardado.getObjectId());
+                c.setUpdated(clienteGuardado.getUpdated());
+                c.setCreated(clienteGuardado.getCreated());
+                modeloLista.addElement(c);
+                clientesList.setSelectedValue(c, true);
+                System.out.println("Objeto guardado con ID: " + c.getObjectId());
             }
-        });
+
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                JOptionPane.showMessageDialog(comp, //Componente
+                        "Error: " + bf.getMessage(), //Mensaje
+                        "Error al guardar el cliente", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen
+            }
+
+        }
+        );
     }
 
     private void editar(final Cliente c, final Component comp) {
         cargandoTxt.setText("Editando cliente...");
-        ParseQuery query = ParseQuery.getQuery("Clientes");
-        query.getInBackground(c.getId(), new GetCallback() {
 
-            @Override
-            public void done(ParseObject clienteParse, ParseException parseException) {
+        Backendless.Persistence.save(c, new AsyncCallback<Cliente>() {
+
+            public void handleResponse(Cliente clienteGuardado) {
                 cargandoTxt.setText("");
-                if (parseException == null) {
-                    if (clienteParse != null) {
-                        clienteParse.put("nombre", c.getNombre());
-                        clienteParse.put("apellido", c.getApellido());
-                        clienteParse.put("mail", c.getMail());
-
-                        if (c.getDescuento() != 0) {
-                            clienteParse.put("descuento", c.getDescuento());
-                        }
-
-                        //TODO: poner eventos
-                        clienteParse.saveInBackground(new SaveCallback() {
-
-                            @Override
-                            public void done(ParseException parseException) {
-                                if (parseException == null) {
-                                    JOptionPane.showMessageDialog(comp, //Componente
-                                            "Cliente Editado Correctamente", //Mensaje
-                                            "Cliente Editado", //Titulo
-                                            JOptionPane.INFORMATION_MESSAGE); //Imagen
-                                    clientesList.setSelectedValue(c, true);
-                                    System.out.println("Objeto ID: " + c.getId() + "editado");
-                                } else {
-                                    JOptionPane.showMessageDialog(comp, //Componente
-                                            parseException.toString(), //Mensaje
-                                            "Error al editar el cliente", //Titulo
-                                            JOptionPane.WARNING_MESSAGE); //Imagen
-
-                                }
-                            }
-                        }
-                        );
-
-                    } else {
-                        JOptionPane.showMessageDialog(comp, //Componente
-                                "No se econtro el cliente en la base de datos", //Mensaje
-                                "Cliente No Encontrado", //Titulo
-                                JOptionPane.WARNING_MESSAGE); //Imagen
-                    }
-
-                } else {
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            parseException.toString(), //Mensaje
-                            "Error al Editar Cliente", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-                }
+                JOptionPane.showMessageDialog(comp, //Componente
+                        "Cliente Editado Correctamente", //Mensaje
+                        "Cliente Guardado", //Titulo
+                        JOptionPane.INFORMATION_MESSAGE); //Imagen
+                System.out.println("Objeto ID: " + c.getObjectId() + "editado");
+                clientesList.setSelectedValue(c, true);
             }
-        });
+
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                JOptionPane.showMessageDialog(comp, //Componente
+                        "Error: " + bf.getMessage(), //Mensaje
+                        "Error al editar el cliente", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen
+            }
+
+        }
+        );
 
     }
 
     private void eliminar(final Cliente c, final Component comp) {
         cargandoTxt.setText("Eliminando cliente...");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Clientes");
 
-        query.getInBackground(c.getId(), new GetCallback<ParseObject>() {
+        Backendless.Persistence.of(Cliente.class).remove(c, new AsyncCallback<Long>() {
 
-            @Override
-            public void done(ParseObject clienteParse, ParseException parseException) {
-                if (parseException == null) {
-                    clienteParse.deleteInBackground(new DeleteCallback() {
+            public void handleResponse(Long t) {
+                cargandoTxt.setText("");
+                System.out.println("Cliente con ID: " + c.getObjectId() + " eliminado");
+                JOptionPane.showMessageDialog(comp, //Componente
+                        "Cliente Eliminado Correctamente", //Mensaje
+                        "Cliente Eliminado", //Titulo
+                        JOptionPane.INFORMATION_MESSAGE); //Imagen
+                modeloLista.removeElement(c);
+            }
 
-                        @Override
-                        public void done(ParseException parseException) {
-                            cargandoTxt.setText("");
-                            JOptionPane.showMessageDialog(comp, //Componente
-                                    "Cliente Eliminado Correctamente", //Mensaje
-                                    "Cliente Eliminado", //Titulo
-                                    JOptionPane.INFORMATION_MESSAGE); //Imagen
-                            modeloLista.removeElement(c);
-                        }
-                    });
-
-                } else {
-                    cargandoTxt.setText("");
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            parseException.toString(), //Mensaje
-                            "Error al eliminar el Cliente", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-                }
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                JOptionPane.showMessageDialog(comp, //Componente
+                        "Error: " + bf.getMessage(), //Mensaje
+                        "Error al eliminar el Cliente", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen
             }
         });
     }
@@ -633,41 +581,29 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
 
     private void cargarClientes() {
         cargandoTxt.setText("Cargando clientes...");
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Clientes");
+        Backendless.Persistence.of(Cliente.class).find(new AsyncCallback<BackendlessCollection<Cliente>>() {
 
-        final Component comp = this;
-
-        query.findInBackground(new FindCallback<ParseObject>() {
-
-            @Override
-            public void done(List<ParseObject> clientesParse, ParseException parseException) {
+            public void handleResponse(BackendlessCollection<Cliente> clientesBackendless) {
                 cargandoTxt.setText("");
-                if (parseException == null) {
-
-                    if (clientesParse != null) {
-
-                        for (int i = 0; i < clientesParse.size(); i++) {
-                            ParseObject clienteParse = clientesParse.get(i);
-                            Cliente c = new Cliente();
-
-                            c.setId(clienteParse.getObjectId());
-                            c.setNombre(clienteParse.getString("nombre"));
-                            c.setApellido(clienteParse.getString("apellido"));
-                            c.setMail(clienteParse.getString("mail"));
-                            //TODO: cargar eventos
-
-                            if (clienteParse.getDouble("descuento") != 0) {
-                                c.setDescuento((float) clienteParse.getDouble("descuento"));
-
-                            }
-
-                            modeloLista.addElement(c);
-                        }
+                if (clientesBackendless != null) {
+                    List<Cliente> clientesList = clientesBackendless.getData();
+                    for (int i = 0; i < clientesList.size(); i++) {
+                        Cliente c = clientesList.get(i);
+                        modeloLista.addElement(c);
                     }
 
-                } else {
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            parseException.toString(), //Mensaje
+                }
+            }
+
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                //Si aun no se cargaron objetos de esta clase, arroja un error
+                //conocido por esto. En caso de que se trate de este error el que
+                //ocasiono la BackendlessFault esta todo en orden, por lo tanto se
+                //saltea.
+                if (!bf.getCode().equals(General.COD_SIN_CLASE)) {
+                    JOptionPane.showMessageDialog(ClientesVentana.this, //Componente
+                            bf.getMessage(), //Mensaje
                             "Error al cargar los clientes", //Titulo
                             JOptionPane.WARNING_MESSAGE); //Imagen
                 }

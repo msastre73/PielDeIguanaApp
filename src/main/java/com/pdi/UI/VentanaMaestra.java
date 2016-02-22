@@ -29,7 +29,7 @@ public class VentanaMaestra extends javax.swing.JFrame {
 
     public VentanaMaestra() {
         initComponents();
-        initCAJA(this);
+        //initCAJA(this);
     }
 
     /**
