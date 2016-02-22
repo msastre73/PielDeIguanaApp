@@ -15,9 +15,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>com.github.thiagolocatelli</groupId>
-        <artifactId>parse4j</artifactId>
-        <version>1.4</version>
-    </dependency>
+ <groupId>com.backendless</groupId>
+ <artifactId>android</artifactId>
+ <version>1.0</version> 
+</dependency>
   </dependencies>
 </project>

@@ -15,7 +15,10 @@ import java.util.Date;
  * @author Marcos Sastre
  */
 public class Evento {
-    private String id;
+
+    private String objectId;
+    private Date created;
+    private Date updated;
     private Date fecha;
     private String lugar;
     private int cantidadDePersonas;
@@ -28,19 +31,18 @@ public class Evento {
     private float montoPagado;
     private float montoRestante;
     private EstadoDeEvento estadoDeEvento;
-    
-    //Constructores
 
+    //Constructores
     public Evento() {
     }
 
-    public Evento(String id, Date fecha, String lugar, int cantidadDePersonas,
-            TipoDeEvento tipoDeEvento, Aliado aliado, Cliente cliente, 
-            float precio, float costo, float resultado, float montoPagado, 
+    public Evento(String objectId, Date fecha, String lugar, int cantidadDePersonas,
+            TipoDeEvento tipoDeEvento, Aliado aliado, Cliente cliente,
+            float precio, float costo, float resultado, float montoPagado,
             float montoRestante, EstadoDeEvento estadoDeEvento) {
-        
+
         //Atributos
-        this.id = id;
+        this.objectId = objectId;
         this.fecha = fecha;
         this.lugar = lugar;
         this.cantidadDePersonas = cantidadDePersonas;
@@ -54,29 +56,41 @@ public class Evento {
         this.montoRestante = montoRestante;
         this.estadoDeEvento = estadoDeEvento;
     }
-    
-    
-    //Metodos
-    
-      public void cotizar(){
-          //TODO - tomando los datos del evento y los valores de referencia,
-          //calcula el costo del evento y setea el atributo costo
-      }
-    
-      public void generarOrdenDeCompra(){
-          //TODO - teniendo en cuenta las cantidades de insumos necesarias y las
-          //que hay en stock por encima del minimo, elabora la orden de compra
-      }
-    
-      
-    //Getters y Setters
 
-    public String getId() {
-        return id;
+    //Metodos
+    public void cotizar() {
+          //TODO - tomando los datos del evento y los valores de referencia,
+        //calcula el costo del evento y setea el atributo costo
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void generarOrdenDeCompra() {
+          //TODO - teniendo en cuenta las cantidades de insumos necesarias y las
+        //que hay en stock por encima del minimo, elabora la orden de compra
+    }
+
+    //Getters y Setters
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 
     public Date getFecha() {
@@ -177,17 +191,9 @@ public class Evento {
 
     @Override
     public String toString() {
-        return "Fecha: " + General.formatoFecha.format(fecha) 
+        return "Fecha: " + General.formatoFecha.format(fecha)
                 + "/ Cant: " + cantidadDePersonas
-                + "/ Precio: $" + precio; 
+                + "/ Precio: $" + precio;
     }
-    
-    
-    
-           
-    
-    
-    
-    
-    
+
 }

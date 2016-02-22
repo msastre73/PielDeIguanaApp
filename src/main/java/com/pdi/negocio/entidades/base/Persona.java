@@ -5,37 +5,59 @@
  */
 package com.pdi.negocio.entidades.base;
 
+import java.util.Date;
+
 /**
  *
  * @author Marcos Sastre
  */
 public abstract class Persona {
     //Atributos
-    private String id;
+    private String objectId;
+    private Date created;
+    private Date updated; 
     private String nombre;
     private String apellido;
     private String mail;
+    
     
     //Constructores
 
     public Persona() {
     }
 
-    public Persona(String id, String nombre, String apellido, String mail) {
-        this.id = id;
+    public Persona(String objectId, String nombre, String apellido, String mail) {
+        this.objectId = objectId;
         this.nombre = nombre;
         this.apellido = apellido;
         this.mail = mail;
     }
-    
+
     //Gettesr y Setters
 
-    public String getId() {
-        return id;
+    public String getObjectId() {    
+        return objectId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 
     public String getNombre() {

@@ -5,23 +5,31 @@
  */
 package com.pdi.UI;
 
+import com.pdi.negocio.entidades.finales.Caja;
+import java.awt.Component;
 import java.awt.Dimension;
+import javax.swing.JOptionPane;
+
 
 /**
  *
  * @author Marcos Sastre
  */
-
 public class VentanaMaestra extends javax.swing.JFrame {
 
     /**
      * Creates new form VentanaMaestra
      */
-    
-    EventosVentana eventosCurrent;
-    
+    //Instancia de la Caja utilizada para todas las ventanas
+    public static Caja CAJA = new Caja();
+
+    //Instancias de las ventanas, para poder interactuar entre ellas
+    public static EventosVentana eventosCurrent;
+    public static CajaVentana cajaCurrent;
+
     public VentanaMaestra() {
         initComponents();
+        initCAJA(this);
     }
 
     /**
@@ -185,7 +193,7 @@ public class VentanaMaestra extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        
+
         if (!EventosVentana.abierta) {
             EventosVentana v = new EventosVentana();
             jDesktopPane1.add(v);
@@ -198,7 +206,7 @@ public class VentanaMaestra extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-         if (!ClientesVentana.abierta) {
+        if (!ClientesVentana.abierta) {
             ClientesVentana v = new ClientesVentana();
             jDesktopPane1.add(v);
             Dimension desktopDim = jDesktopPane1.getSize();
@@ -209,7 +217,7 @@ public class VentanaMaestra extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-          if (!AliadosVentana.abierta) {
+        if (!AliadosVentana.abierta) {
             AliadosVentana v = new AliadosVentana();
             jDesktopPane1.add(v);
             Dimension desktopDim = jDesktopPane1.getSize();
@@ -220,28 +228,29 @@ public class VentanaMaestra extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
-          if (!CajaVentana.abierta) {
+        if (!CajaVentana.abierta) {
             CajaVentana v = new CajaVentana();
             jDesktopPane1.add(v);
             Dimension desktopDim = jDesktopPane1.getSize();
             v.setSize(desktopDim);
             System.out.println(desktopDim);
             v.setVisible(true);
+            cajaCurrent = v;
         }
     }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
-         if (!InventarioVentana.abierta) {
+        if (!InventarioVentana.abierta) {
             InventarioVentana v = new InventarioVentana();
             jDesktopPane1.add(v);
             Dimension desktopDim = jDesktopPane1.getSize();
             v.setSize(desktopDim);
             v.setVisible(true);
-         }
+        }
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
-        
+
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     /**
@@ -277,6 +286,33 @@ public class VentanaMaestra extends javax.swing.JFrame {
                 new VentanaMaestra().setVisible(true);
             }
         });
+    }
+
+    private void initCAJA(final Component c) {
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Caja");
+
+        query.getInBackground("YLhTsAUPpm", new GetCallback<ParseObject>() {
+
+            @Override
+            public void done(ParseObject cajaParse, ParseException parseException) {
+                if (parseException == null) {
+                    System.out.println(cajaParse.getBoolean("minOk"));
+                    System.out.println(cajaParse.getDouble("minimo"));
+                    System.out.println(cajaParse.getDouble("saldo"));
+                    
+                    CAJA.setMinOK(cajaParse.getBoolean("minOk"));
+                    CAJA.setMinimo((float) cajaParse.getDouble("minimo"));
+                    CAJA.setSaldo((float) cajaParse.getDouble("saldo"));
+
+                } else {
+                    JOptionPane.showMessageDialog(c, //Componente
+                            parseException.toString(), //Mensaje
+                            "Error al cargar la caja", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
+            }
+        });
+
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

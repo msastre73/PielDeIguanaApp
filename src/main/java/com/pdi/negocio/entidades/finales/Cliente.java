@@ -22,9 +22,9 @@ public class Cliente extends Persona{
     public Cliente() {
     }
 
-    public Cliente(List<Evento> eventos, float descuento, String id, String nombre,
+    public Cliente(List<Evento> eventos, float descuento, String objectId, String nombre,
             String apellido, String mail) {
-        super(id, nombre, apellido, mail);
+        super(objectId, nombre, apellido, mail);
         this.eventos = eventos;
         this.descuento = descuento;
     }

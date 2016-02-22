@@ -35,6 +35,13 @@ public class Aliado extends Persona{
     public int getCantidadDeEventos(){
         return eventos.size();
     }
+
+    @Override
+    public String toString() {
+        return getNombre() + " " + getApellido() + ", Comision: " + getComisionPorcentaje()
+                + ", Comision Acumulada: " + getComisionMonto();
+    }
+    
     
     
     //Getters y Setters

@@ -5,6 +5,7 @@
  */
 package com.pdi.util;
 
+import java.awt.Font;
 import java.text.SimpleDateFormat;
 
 
@@ -12,7 +13,12 @@ import java.text.SimpleDateFormat;
  *
  * @author Marcos Sastre
  */
+
+
+
 public class General {
+    
+    
     public static SimpleDateFormat formatoFecha = 
             new SimpleDateFormat("dd/MM/yyyy");
     

@@ -5,10 +5,11 @@
  */
 package com.pdi.UI;
 
+import com.backendless.Backendless;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
 import javax.swing.DefaultListModel;
-import org.parse4j.ParseException;
-import org.parse4j.ParseObject;
-import org.parse4j.callback.SaveCallback;
+
 import com.pdi.negocio.entidades.finales.*;
 import com.pdi.util.General;
 import com.pdi.negocio.enums.TipoDeEvento;
@@ -18,10 +19,6 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 
 import javax.swing.JOptionPane;
-import org.parse4j.ParseQuery;
-import org.parse4j.callback.DeleteCallback;
-import org.parse4j.callback.FindCallback;
-import org.parse4j.callback.GetCallback;
 
 /**
  *
@@ -606,7 +603,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 } else {
                     editar(e, this);
                 }
-                
+
                 deshabilitarDetalles();
 
             } catch (java.text.ParseException ex) {
@@ -767,6 +764,28 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     //Guardar el Evento en Parse
     private void agregar(final Evento e, final Component c) {
         cargandoTxt.setText("Guardando evento...");
+
+        Backendless.Persistence.save(e, new AsyncCallback<Evento>() {
+
+            public void handleResponse(Evento eventoGuardado) {
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Evento Guardado Correctamente", //Mensaje
+                        "Evento Guardado", //Titulo
+                        JOptionPane.INFORMATION_MESSAGE); //Imagen
+                e.setObjectId(eventoGuardado.getObjectId());
+                modeloLista.addElement(e);
+                eventosList.setSelectedValue(e, true);
+                System.out.println("Objeto guardado con ID: " + e.getObjectId());
+            }
+
+            public void handleFault(BackendlessFault bf) {
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Error: " + bf.getMessage(), //Mensaje
+                        "Error al guardar el evento", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen
+            }
+
+        });
         final ParseObject eventoParse = new ParseObject("Eventos");
 
         eventoParse.put("lugar", e.getLugar());

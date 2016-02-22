@@ -194,7 +194,7 @@
                   <EmptySpace min="-2" pref="218" max="-2" attributes="0"/>
                   <Component id="guardarBtn" min="-2" pref="190" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="CancelarBtn" min="-2" pref="190" max="-2" attributes="0"/>
+                  <Component id="cancelarBtn" min="-2" pref="190" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -229,7 +229,7 @@
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="CancelarBtn" alignment="3" max="32767" attributes="0"/>
+                      <Component id="cancelarBtn" alignment="3" max="32767" attributes="0"/>
                       <Component id="guardarBtn" alignment="3" max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -246,13 +246,13 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="guardarBtnActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="CancelarBtn">
+        <Component class="javax.swing.JButton" name="cancelarBtn">
           <Properties>
             <Property name="text" type="java.lang.String" value="Cancelar"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CancelarBtnActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cancelarBtnActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
@@ -305,7 +305,6 @@
                 <TitledBorder title="Eventos"/>
               </Border>
             </Property>
-            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
 
           <Layout>
@@ -343,6 +342,7 @@
                         <StringItem index="4" value="Item 5"/>
                       </StringArray>
                     </Property>
+                    <Property name="enabled" type="boolean" value="false"/>
                   </Properties>
                 </Component>
               </SubComponents>

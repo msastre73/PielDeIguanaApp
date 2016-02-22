@@ -5,6 +5,20 @@
  */
 package com.pdi.UI;
 
+import com.pdi.negocio.entidades.finales.Aliado;
+import com.pdi.util.General;
+import java.awt.Component;
+import java.util.List;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import org.parse4j.ParseException;
+import org.parse4j.ParseObject;
+import org.parse4j.ParseQuery;
+import org.parse4j.callback.DeleteCallback;
+import org.parse4j.callback.FindCallback;
+import org.parse4j.callback.GetCallback;
+import org.parse4j.callback.SaveCallback;
+
 /**
  *
  * @author Marcos Sastre
@@ -14,12 +28,16 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
     /**
      * Creates new form EventoVentana
      */
-    
     //Atrib para manejar si hay una ventana abierta de este tipo
     public static boolean abierta = false;
-    
+    DefaultListModel modeloLista = new DefaultListModel();
+
     public AliadosVentana() {
         initComponents();
+        //Relaciona el modelo con la lista
+        aliadosList.setModel(modeloLista);
+
+        cargarAliados();
     }
 
     /**
@@ -33,26 +51,27 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jList2 = new javax.swing.JList();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        aliadosList = new javax.swing.JList();
+        nuevoBtn = new javax.swing.JButton();
+        editarBtn = new javax.swing.JButton();
+        eliminarBtn = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
-        jButton6 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
+        guardarBtn = new javax.swing.JButton();
+        cancelarBtn = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        lugarTxt = new javax.swing.JTextField();
+        nombreTxt = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
-        fechaTxt = new javax.swing.JTextField();
+        apellidoTxt = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        personasTxt = new javax.swing.JTextField();
+        mailTxt = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        personasTxt1 = new javax.swing.JTextField();
+        comisionTxt = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
-        personasTxt2 = new javax.swing.JTextField();
+        eventosList = new javax.swing.JList();
+        comisionAcumuladaTxt = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
+        cargandoTxt = new javax.swing.JLabel();
 
         setClosable(true);
         setIconifiable(true);
@@ -64,15 +83,37 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
         } catch (java.beans.PropertyVetoException e1) {
             e1.printStackTrace();
         }
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameClosed(evt);
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Listado de Aliados"));
 
-        jList2.setModel(new javax.swing.AbstractListModel() {
+        aliadosList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane2.setViewportView(jList2);
+        aliadosList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                aliadosListMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(aliadosList);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -88,40 +129,77 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
-        jButton1.setText("Nuevo");
+        nuevoBtn.setText("Nuevo");
+        nuevoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevoBtnActionPerformed(evt);
+            }
+        });
 
-        jButton2.setText("Editar");
+        editarBtn.setText("Editar");
+        editarBtn.setEnabled(false);
+        editarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editarBtnActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Eliminar");
+        eliminarBtn.setText("Eliminar");
+        eliminarBtn.setEnabled(false);
+        eliminarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                eliminarBtnActionPerformed(evt);
+            }
+        });
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Detalles del Aliado"));
 
-        jButton6.setText("Guardar");
+        guardarBtn.setText("Guardar");
+        guardarBtn.setEnabled(false);
+        guardarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarBtnActionPerformed(evt);
+            }
+        });
 
-        jButton11.setText("Cancelar");
+        cancelarBtn.setText("Cancelar");
+        cancelarBtn.setEnabled(false);
+        cancelarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarBtnActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Nombre:");
 
-        lugarTxt.addActionListener(new java.awt.event.ActionListener() {
+        nombreTxt.setEnabled(false);
+        nombreTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                lugarTxtActionPerformed(evt);
+                nombreTxtActionPerformed(evt);
             }
         });
 
         jLabel1.setText("Apellido");
 
+        apellidoTxt.setEnabled(false);
+
         jLabel4.setText("Mail:");
+
+        mailTxt.setEnabled(false);
 
         jLabel7.setText("Comision (%):");
 
+        comisionTxt.setEnabled(false);
+
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Eventos"));
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
+        eventosList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane1.setViewportView(jList1);
+        eventosList.setEnabled(false);
+        jScrollPane1.setViewportView(eventosList);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -140,6 +218,8 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
                 .addGap(32, 32, 32))
         );
 
+        comisionAcumuladaTxt.setEnabled(false);
+
         jLabel8.setText("Comision Acumulada ($)");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -148,9 +228,9 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(218, 218, 218)
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(guardarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cancelarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
@@ -158,23 +238,23 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(personasTxt2))
+                        .addComponent(comisionAcumuladaTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(personasTxt1, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE))
+                        .addComponent(comisionTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 203, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lugarTxt))
+                        .addComponent(nombreTxt))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(fechaTxt))
+                        .addComponent(apellidoTxt))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(personasTxt)))
+                        .addComponent(mailTxt)))
                 .addGap(27, 27, 27)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -187,30 +267,32 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(lugarTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(nombreTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
-                            .addComponent(fechaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(apellidoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(personasTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(mailTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(personasTxt1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(comisionTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(personasTxt2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(comisionAcumuladaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cancelarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(guardarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        cargandoTxt.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -220,9 +302,10 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nuevoBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(editarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(eliminarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                    .addComponent(cargandoTxt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(20, 20, 20))
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -230,14 +313,16 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
+                        .addComponent(nuevoBtn)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)
+                        .addComponent(editarBtn)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(eliminarBtn)
+                        .addGap(74, 74, 74)
+                        .addComponent(cargandoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -246,33 +331,426 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void lugarTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lugarTxtActionPerformed
+    private void nombreTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreTxtActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_lugarTxtActionPerformed
+    }//GEN-LAST:event_nombreTxtActionPerformed
+
+    private void nuevoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoBtnActionPerformed
+        limpiarForm();
+        habilitarDetalles();
+        nombreTxt.requestFocus();
+    }//GEN-LAST:event_nuevoBtnActionPerformed
+
+    private void guardarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarBtnActionPerformed
+        boolean validacionOK = validarForm();
+        boolean esNuevo = true;
+
+        if (validacionOK) {
+
+            Aliado a = new Aliado();
+            //Si hay algun aliado seleccionado lo utiliza para actualizarlo
+            if (aliadosList.getSelectedIndex() != -1) {
+                a = (Aliado) aliadosList.getSelectedValue();
+                esNuevo = false;
+            }
+            a.setNombre(nombreTxt.getText());
+            a.setApellido(apellidoTxt.getText());
+            a.setMail(mailTxt.getText());
+
+            if (!comisionTxt.getText().equals("")) {
+                a.setComisionPorcentaje(Float.parseFloat(comisionTxt.getText()));
+            }
+
+            if (!comisionAcumuladaTxt.getText().equals("")) {
+                a.setComisionMonto(Float.parseFloat(comisionAcumuladaTxt.getText()));
+            }
+
+            if (esNuevo) {
+                agregar(a, this);
+            } else {
+                editar(a, this);
+            }
+
+            deshabilitarDetalles();
+
+        }
 
 
+    }//GEN-LAST:event_guardarBtnActionPerformed
+
+    private void cancelarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarBtnActionPerformed
+        limpiarForm();
+        deshabilitarDetalles();
+        //Dehabilita los otros botones
+        editarBtn.setEnabled(false);
+        eliminarBtn.setEnabled(false);
+    }//GEN-LAST:event_cancelarBtnActionPerformed
+
+    private void editarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editarBtnActionPerformed
+       habilitarDetalles();
+    }//GEN-LAST:event_editarBtnActionPerformed
+
+    private void eliminarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarBtnActionPerformed
+        Aliado a = (Aliado) aliadosList.getSelectedValue();
+        
+        //Mensaje de Confirmacion
+        int rta = JOptionPane.showConfirmDialog(this,
+                "Confirma que quiere eliminar este aliado?:\n" + a.toString(),
+                "Confirmar eliminacion", JOptionPane.YES_NO_OPTION);
+        
+        if (rta == JOptionPane.NO_OPTION) {
+            return;
+        } else {
+            eliminar(a, this);
+            limpiarForm();
+            editarBtn.setEnabled(false);
+            eliminarBtn.setEnabled(false);
+            
+        }
+        
+        
+    }//GEN-LAST:event_eliminarBtnActionPerformed
+
+    private void aliadosListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aliadosListMouseClicked
+         //Activa los botones correspondientes
+        editarBtn.setEnabled(true);
+        eliminarBtn.setEnabled(true);
+        
+        //Obtiene el item seleccionado y completa los campos
+        Aliado a = (Aliado) aliadosList.getSelectedValue();
+
+        nombreTxt.setText(a.getNombre());
+        apellidoTxt.setText(a.getApellido());
+        mailTxt.setText(a.getMail());
+
+        if (a.getComisionPorcentaje()!= 0) {
+            comisionTxt.setText(Float.toString(a.getComisionPorcentaje()));
+        }
+        
+        if (a.getComisionMonto()!= 0) {
+            comisionAcumuladaTxt.setText(Float.toString(a.getComisionMonto()));
+        }
+
+        //TODO: completar eventos
+    }//GEN-LAST:event_aliadosListMouseClicked
+
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
+        abierta = false;
+    }//GEN-LAST:event_formInternalFrameClosed
+
+    private void agregar(final Aliado a, final Component comp) {
+        cargandoTxt.setText("Guardando aliado...");
+
+        final ParseObject aliadoParse = new ParseObject("Aliados");
+
+        aliadoParse.put("nombre", a.getNombre());
+        aliadoParse.put("apellido", a.getApellido());
+        aliadoParse.put("mail", a.getMail());
+
+        if (a.getComisionMonto() != 0) {
+            aliadoParse.put("comisionMonto", a.getComisionMonto());
+        }
+
+        if (a.getComisionPorcentaje() != 0) {
+            aliadoParse.put("comisionPorcentaje", a.getComisionPorcentaje());
+        }
+
+        //TODO: poner eventos
+        aliadoParse.saveInBackground(new SaveCallback() {
+
+            @Override
+            public void done(ParseException parseException) {
+                cargandoTxt.setText("");
+                if (parseException == null) {
+                    JOptionPane.showMessageDialog(comp, //Componente
+                            "Aliado Guardado Correctamente", //Mensaje
+                            "Aliado Guardado", //Titulo
+                            JOptionPane.INFORMATION_MESSAGE); //Imagen
+                    a.setId(aliadoParse.getObjectId());
+                    modeloLista.addElement(a);
+                    aliadosList.setSelectedValue(a, true);
+                    System.out.println("Objeto guardado con ID: " + a.getId());
+                } else {
+                    JOptionPane.showMessageDialog(comp, //Componente
+                            "Error: " + parseException.toString(), //Mensaje
+                            "Error al guardar el aliado", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+
+                }
+            }
+        });
+
+    }
+
+    private void editar(final Aliado a, final Component comp) {
+        cargandoTxt.setText("Editando aliado...");
+        ParseQuery query = ParseQuery.getQuery("Aliados");
+        query.getInBackground(a.getId(), new GetCallback() {
+
+            @Override
+            public void done(ParseObject aliadoParse, ParseException parseException) {
+                cargandoTxt.setText("");
+                if (parseException == null) {
+                    if (aliadoParse != null) {
+                        aliadoParse.put("nombre", a.getNombre());
+                        aliadoParse.put("apellido", a.getApellido());
+                        aliadoParse.put("mail", a.getMail());
+
+                        if (a.getComisionMonto() != 0) {
+                            aliadoParse.put("comisionMonto", a.getComisionMonto());
+                        }
+
+                        if (a.getComisionPorcentaje() != 0) {
+                            aliadoParse.put("comisionPorcentaje", a.getComisionPorcentaje());
+                        }
+                        //TODO: poner eventos
+                        aliadoParse.saveInBackground(new SaveCallback() {
+
+                            @Override
+                            public void done(ParseException parseException) {
+                                if (parseException == null) {
+                                    JOptionPane.showMessageDialog(comp, //Componente
+                                            "Aliado Editado Correctamente", //Mensaje
+                                            "Aliado Editado", //Titulo
+                                            JOptionPane.INFORMATION_MESSAGE); //Imagen
+                                    aliadosList.setSelectedValue(a, true);
+                                    System.out.println("Objeto ID: " + a.getId() + "editado");
+                                } else {
+                                    JOptionPane.showMessageDialog(comp, //Componente
+                                            parseException.toString(), //Mensaje
+                                            "Error al editar el aliado", //Titulo
+                                            JOptionPane.WARNING_MESSAGE); //Imagen
+
+                                }
+                            }
+                        }
+                        );
+
+                    } else {
+                        JOptionPane.showMessageDialog(comp, //Componente
+                                "No se econtro el aliado en la base de datos", //Mensaje
+                                "Aliado No Encontrado", //Titulo
+                                JOptionPane.WARNING_MESSAGE); //Imagen
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(comp, //Componente
+                            parseException.toString(), //Mensaje
+                            "Error al Editar Aliado", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
+            }
+        });
+    }
+    
+    private void eliminar(final Aliado a, final Component comp){
+        cargandoTxt.setText("Eliminando aliado...");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Aliados");
+
+        query.getInBackground(a.getId(), new GetCallback<ParseObject>() {
+
+            @Override
+            public void done(ParseObject aliadoParse, ParseException parseException) {
+                if (parseException == null) {
+                    aliadoParse.deleteInBackground(new DeleteCallback() {
+
+                        @Override
+                        public void done(ParseException parseException) {
+                            cargandoTxt.setText("");
+                            JOptionPane.showMessageDialog(comp, //Componente
+                                    "Aliado Eliminado Correctamente", //Mensaje
+                                    "Aliado Eliminado", //Titulo
+                                    JOptionPane.INFORMATION_MESSAGE); //Imagen
+                            modeloLista.removeElement(a);
+                        }
+                    });
+
+                } else {
+                    cargandoTxt.setText("");
+                    JOptionPane.showMessageDialog(comp, //Componente
+                            parseException.toString(), //Mensaje
+                            "Error al eliminar el Aliado", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
+            }
+        });
+    }
+
+    private void cargarAliados() {
+        cargandoTxt.setText("Cargando aliados...");
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Aliados");
+
+        final Component comp = this;
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+
+            @Override
+            public void done(List<ParseObject> aliadosParse, ParseException parseException) {
+                cargandoTxt.setText("");
+                if (parseException == null) {
+
+                    if (aliadosParse != null) {
+
+                        for (int i = 0; i < aliadosParse.size(); i++) {
+                            ParseObject aliadoParse = aliadosParse.get(i);
+                            Aliado a = new Aliado();
+
+                            a.setId(aliadoParse.getObjectId());
+                            a.setNombre(aliadoParse.getString("nombre"));
+                            a.setApellido(aliadoParse.getString("apellido"));
+                            a.setMail(aliadoParse.getString("mail"));
+                            //TODO: cargar eventos
+
+                            if (aliadoParse.getDouble("comisionMonto") != 0) {
+                                a.setComisionMonto((float) aliadoParse.getDouble("comisionMonto"));
+
+                            }
+                            
+                            if (aliadoParse.getDouble("comisionPorcentaje") != 0) {
+                                a.setComisionPorcentaje((float) aliadoParse.getDouble("comisionPorcentaje"));
+
+                            }
+
+                            modeloLista.addElement(a);
+                        }
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(comp, //Componente
+                            parseException.toString(), //Mensaje
+                            "Error al cargar los aliados", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
+            }
+        });
+    }
+
+    private boolean validarForm() {
+        //Validar que el nombre no este vacio
+        if (nombreTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "El nombre no puede estar vacio",
+                    "Completar Nombre", JOptionPane.WARNING_MESSAGE);
+            nombreTxt.requestFocus();
+            return false;
+        }
+
+        //Vaidar que el apellido no este vacio
+        if (apellidoTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "El apellido no puede estar vacio",
+                    "Completar Apellido", JOptionPane.WARNING_MESSAGE);
+            apellidoTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que el mail no este vacio
+        if (mailTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "El mail no puede estar vacio",
+                    "Completar Mail", JOptionPane.WARNING_MESSAGE);
+            mailTxt.requestFocus();
+            return false;
+        }
+
+        //Validar el formato del mail
+        if (!mailTxt.getText().matches(General.formatoMail)) {
+            JOptionPane.showMessageDialog(this,
+                    "Ingrese un mail valido",
+                    "Mail incorrecto", JOptionPane.WARNING_MESSAGE);
+            mailTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que si hay comision, tenga formato decimal
+        if (!comisionTxt.getText().equals("")) {
+            try {
+                Float.parseFloat(comisionTxt.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this,
+                        "La comision debe ser un numero decimal",
+                        "Corregir Comision ", JOptionPane.WARNING_MESSAGE);
+                comisionTxt.requestFocus();
+                return false;
+            }
+        }
+
+        //Validar qe si hay comision acumulada, tenga formato decimal
+        if (!comisionAcumuladaTxt.getText().equals("")) {
+            try {
+                Float.parseFloat(comisionAcumuladaTxt.getText());
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this,
+                        "La comision acumulada debe ser un numero decimal",
+                        "Corregir Comision ", JOptionPane.WARNING_MESSAGE);
+                comisionAcumuladaTxt.requestFocus();
+                return false;
+            }
+        }
+
+        return true;
+
+    }
+
+    private void habilitarDetalles() {
+        nombreTxt.setEnabled(true);
+        apellidoTxt.setEnabled(true);
+        mailTxt.setEnabled(true);
+        comisionTxt.setEnabled(true);
+        comisionAcumuladaTxt.setEnabled(true);
+        eventosList.setEnabled(true);
+        guardarBtn.setEnabled(true);
+        cancelarBtn.setEnabled(true);
+
+    }
+    
+    private void deshabilitarDetalles() {
+        nombreTxt.setEnabled(false);
+        apellidoTxt.setEnabled(false);
+        mailTxt.setEnabled(false);
+        comisionTxt.setEnabled(false);
+        comisionAcumuladaTxt.setEnabled(false);
+        eventosList.setEnabled(false);
+        guardarBtn.setEnabled(false);
+        cancelarBtn.setEnabled(false);
+
+    }
+
+    private void limpiarForm() {
+        nombreTxt.setText("");
+        apellidoTxt.setText("");
+        mailTxt.setText("");
+        comisionTxt.setText("");
+        comisionAcumuladaTxt.setText("");
+        eventosList.removeAll();
+        aliadosList.clearSelection();
+    }
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField fechaTxt;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton11;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton6;
+    private javax.swing.JList aliadosList;
+    private javax.swing.JTextField apellidoTxt;
+    private javax.swing.JButton cancelarBtn;
+    private javax.swing.JLabel cargandoTxt;
+    private javax.swing.JTextField comisionAcumuladaTxt;
+    private javax.swing.JTextField comisionTxt;
+    private javax.swing.JButton editarBtn;
+    private javax.swing.JButton eliminarBtn;
+    private javax.swing.JList eventosList;
+    private javax.swing.JButton guardarBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JList jList1;
-    private javax.swing.JList jList2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField lugarTxt;
-    private javax.swing.JTextField personasTxt;
-    private javax.swing.JTextField personasTxt1;
-    private javax.swing.JTextField personasTxt2;
+    private javax.swing.JTextField mailTxt;
+    private javax.swing.JTextField nombreTxt;
+    private javax.swing.JButton nuevoBtn;
     // End of variables declaration//GEN-END:variables
+
 }

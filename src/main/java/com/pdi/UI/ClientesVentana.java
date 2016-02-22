@@ -58,7 +58,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
         eliminarBtn = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         guardarBtn = new javax.swing.JButton();
-        CancelarBtn = new javax.swing.JButton();
+        cancelarBtn = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         nombreTxt = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
@@ -161,11 +161,11 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
             }
         });
 
-        CancelarBtn.setText("Cancelar");
-        CancelarBtn.setEnabled(false);
-        CancelarBtn.addActionListener(new java.awt.event.ActionListener() {
+        cancelarBtn.setText("Cancelar");
+        cancelarBtn.setEnabled(false);
+        cancelarBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CancelarBtnActionPerformed(evt);
+                cancelarBtnActionPerformed(evt);
             }
         });
 
@@ -191,13 +191,13 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
         descuentoTxt.setEnabled(false);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Eventos"));
-        jPanel4.setEnabled(false);
 
         eventosList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        eventosList.setEnabled(false);
         jScrollPane1.setViewportView(eventosList);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -244,7 +244,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
                 .addGap(218, 218, 218)
                 .addComponent(guardarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(CancelarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cancelarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -271,7 +271,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(CancelarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cancelarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(guardarBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
@@ -332,7 +332,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
         if (validacionOK) {
 
             Cliente c = new Cliente();
-            //Si hay algun evento seleccionado lo utiliza para actualizarlo
+            //Si hay algun cliente seleccionado lo utiliza para actualizarlo
             if (clientesList.getSelectedIndex() != -1) {
                 c = (Cliente) clientesList.getSelectedValue();
                 esNuevo = false;
@@ -383,7 +383,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
         habilitarDetalles();
     }//GEN-LAST:event_editarBtnActionPerformed
 
-    private void CancelarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CancelarBtnActionPerformed
+    private void cancelarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarBtnActionPerformed
         limpiarForm();
         deshabilitarDetalles();
         //Dehabilita los otros botones
@@ -391,7 +391,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
         eliminarBtn.setEnabled(false);
 
 
-    }//GEN-LAST:event_CancelarBtnActionPerformed
+    }//GEN-LAST:event_cancelarBtnActionPerformed
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
         abierta = false;
@@ -424,7 +424,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
         descuentoTxt.setEnabled(true);
         eventosList.setEnabled(true);
         guardarBtn.setEnabled(true);
-        CancelarBtn.setEnabled(true);
+        cancelarBtn.setEnabled(true);
 
     }
 
@@ -435,7 +435,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
         descuentoTxt.setEnabled(false);
         eventosList.setEnabled(false);
         guardarBtn.setEnabled(false);
-        CancelarBtn.setEnabled(false);
+        cancelarBtn.setEnabled(false);
     }
 
     private void limpiarForm() {
@@ -511,7 +511,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
                                 if (parseException == null) {
                                     JOptionPane.showMessageDialog(comp, //Componente
                                             "Cliente Editado Correctamente", //Mensaje
-                                            "Cliente Guardado", //Titulo
+                                            "Cliente Editado", //Titulo
                                             JOptionPane.INFORMATION_MESSAGE); //Imagen
                                     clientesList.setSelectedValue(c, true);
                                     System.out.println("Objeto ID: " + c.getId() + "editado");
@@ -537,7 +537,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
                     JOptionPane.showMessageDialog(comp, //Componente
                             parseException.toString(), //Mensaje
                             "Error al Editar Cliente", //Titulo
-                            JOptionPane.INFORMATION_MESSAGE); //Imagen
+                            JOptionPane.WARNING_MESSAGE); //Imagen
                 }
             }
         });
@@ -621,7 +621,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this,
                         "El descuento debe ser un numero decimal",
-                        "Corregir Cant de Personas ", JOptionPane.WARNING_MESSAGE);
+                        "Corregir Comision", JOptionPane.WARNING_MESSAGE);
                 descuentoTxt.requestFocus();
                 return false;
             }
@@ -676,8 +676,8 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton CancelarBtn;
     private javax.swing.JTextField apellidoTxt;
+    private javax.swing.JButton cancelarBtn;
     private javax.swing.JLabel cargandoTxt;
     private javax.swing.JList clientesList;
     private javax.swing.JTextField descuentoTxt;

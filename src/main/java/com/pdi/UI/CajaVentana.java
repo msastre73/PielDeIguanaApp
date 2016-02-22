@@ -5,6 +5,21 @@
  */
 package com.pdi.UI;
 
+import com.pdi.util.General;
+import java.awt.Color;
+import java.awt.Component;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import org.parse4j.ParseObject;
+import org.parse4j.ParseQuery;
+import org.parse4j.callback.FindCallback;
+import org.parse4j.callback.SaveCallback;
+
 /**
  *
  * @author Marcos Sastre
@@ -14,12 +29,29 @@ public class CajaVentana extends javax.swing.JInternalFrame {
     /**
      * Creates new form EventoVentana
      */
-    
+    //Codigos para referirse a Ingreso/Egreso
+    public final static int INGRESO_COD = 1;
+    public final static int EGRESO_COD = -1;
+
     //Atrib para manejar si hay una ventana abierta de este tipo
     public static boolean abierta = false;
+
+    //Titulos para las columnas de la tabla
+    private final String[] colName = new String[]{
+        "Fecha", "Concepto", "Monto"};
+
     
+    //Modelo para controlar la info de la tabla
+    DefaultTableModel modeloTabla = new DefaultTableModel(null, colName);
+
     public CajaVentana() {
         initComponents();
+
+        //Relaciona los modelos con las tablas
+        imputacionesTbl.setModel(modeloTabla);
+        actualizarEtiquetas();
+        cargarImputaciones();
+
     }
 
     /**
@@ -33,23 +65,22 @@ public class CajaVentana extends javax.swing.JInternalFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jTable5 = new javax.swing.JTable();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jTable6 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        imputacionesTbl = new javax.swing.JTable();
+        agregarIngresoBtn = new javax.swing.JButton();
+        agregarEgresoBtn = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        saldoLbl = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        fechaTxt = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        conceptoTxt = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        montoTxt = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        estadoLbl = new javax.swing.JLabel();
+        cargandoTxt = new javax.swing.JLabel();
+        minLbl = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         setClosable(true);
         setIconifiable(true);
@@ -61,10 +92,27 @@ public class CajaVentana extends javax.swing.JInternalFrame {
         } catch (java.beans.PropertyVetoException e1) {
             e1.printStackTrace();
         }
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameClosed(evt);
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Flujo de Fondos"));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        imputacionesTbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -87,94 +135,43 @@ public class CajaVentana extends javax.swing.JInternalFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTable1);
-
-        jTable3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Ingresos"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable3);
-
-        jTable5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jTable5.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Egresos"
-            }
-        ));
-        jScrollPane5.setViewportView(jTable5);
-
-        jTable6.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Fecha", "Concepto", "Monto"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.Float.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane6.setViewportView(jTable6);
+        jScrollPane3.setViewportView(imputacionesTbl);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 549, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 465, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jScrollPane3)))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jButton2.setText("Agregar Ingreso");
+        agregarIngresoBtn.setText("Agregar Ingreso");
+        agregarIngresoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregarIngresoBtnActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Agregar Egreso");
+        agregarEgresoBtn.setText("Agregar Egreso");
+        agregarEgresoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                agregarEgresoBtnActionPerformed(evt);
+            }
+        });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 2, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
         jLabel1.setText("SALDO:");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 18)); // NOI18N
-        jLabel2.setText("$0");
+        saldoLbl.setFont(new java.awt.Font("Tahoma", 2, 18)); // NOI18N
+        saldoLbl.setText("$0");
 
         jLabel3.setText("Fecha:");
 
@@ -182,62 +179,92 @@ public class CajaVentana extends javax.swing.JInternalFrame {
 
         jLabel5.setText("Monto:");
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
+        jLabel2.setText("ESTADO:");
+
+        estadoLbl.setFont(new java.awt.Font("Tahoma", 2, 18)); // NOI18N
+        estadoLbl.setText("OK");
+
+        cargandoTxt.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+
+        minLbl.setFont(new java.awt.Font("Tahoma", 2, 18)); // NOI18N
+        minLbl.setText("$0");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 3, 18)); // NOI18N
+        jLabel6.setText("MINIMO:");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(estadoLbl, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField1))
+                        .addComponent(fechaTxt))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField2))
+                        .addComponent(conceptoTxt))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField3))
+                        .addComponent(montoTxt))
+                    .addComponent(agregarIngresoBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+                    .addComponent(agregarEgresoBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cargandoTxt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 8, Short.MAX_VALUE))
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6)
+                            .addComponent(minLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1)
+                            .addComponent(saldoLbl, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(27, 27, 27)
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addComponent(jLabel1)
+                        .addGap(3, 3, 3)
+                        .addComponent(saldoLbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel6)
+                        .addGap(3, 3, 3)
+                        .addComponent(minLbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel2)
+                        .addGap(2, 2, 2)
+                        .addComponent(estadoLbl)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(fechaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(conceptoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(montoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton2)
+                        .addComponent(agregarIngresoBtn)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton3)
+                        .addComponent(agregarEgresoBtn)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cargandoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -245,26 +272,250 @@ public class CajaVentana extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void agregarIngresoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarIngresoBtnActionPerformed
+
+        boolean validacionOK = validarForm();
+
+        if (validacionOK) {
+
+//Si es valida la imputacion en la caja continua
+            boolean imputacionOK = VentanaMaestra.CAJA.imputarIngreso(
+                    Float.parseFloat(montoTxt.getText()), this);
+
+            if (imputacionOK) {
+                //Agrega la imputacion en la tabla y en Parse
+                agregar(INGRESO_COD, this,
+                        fechaTxt.getText(), conceptoTxt.getText(), montoTxt.getText());
+
+                actualizarEtiquetas();
+
+                limpiarForm();
+            }
+
+        }
+
+
+    }//GEN-LAST:event_agregarIngresoBtnActionPerformed
+
+    private void agregarEgresoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_agregarEgresoBtnActionPerformed
+        boolean validacionOK = validarForm();
+
+        if (validacionOK) {
+
+            //Si es valida la imputacion en la caja continua
+            boolean imputacionOK = VentanaMaestra.CAJA.imputarEgreso(
+                    Float.parseFloat(montoTxt.getText()), this);
+
+            if (imputacionOK) {
+                //Agrega la imputacion en la tabla y en Parse
+                agregar(EGRESO_COD, this,
+                        fechaTxt.getText(), conceptoTxt.getText(), montoTxt.getText());
+
+                actualizarEtiquetas();
+
+                limpiarForm();
+            }
+
+        }
+    }//GEN-LAST:event_agregarEgresoBtnActionPerformed
+
+    private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
+        abierta = false;
+    }//GEN-LAST:event_formInternalFrameClosed
+
+    public void agregar(int cod, final Component c,
+            final String fecha, final String concepto, String monto) {
+
+        //Monto en flot para guardarlo en Parse y en tabla
+        final float montoFloat = Float.parseFloat(monto) * cod;
+
+        cargandoTxt.setText("Guardando imputacion...");
+
+        final ParseObject imputacionParse = new ParseObject("Imputaciones");
+        imputacionParse.put("codigo", cod);
+        try {
+            imputacionParse.put("fecha", General.formatoFecha.parse(fecha));
+        } catch (ParseException ex) {
+            //Nunca se llega aca porque la fecha ya esta validada;
+        }
+        imputacionParse.put("concepto", concepto);
+        imputacionParse.put("monto", montoFloat);
+
+        imputacionParse.saveInBackground(new SaveCallback() {
+
+            @Override
+            public void done(org.parse4j.ParseException parseException) {
+                cargandoTxt.setText("");
+                if (parseException == null) {
+                    JOptionPane.showMessageDialog(c, //Componente
+                            "Imputacion Guardada Correctamente", //Mensaje
+                            "Imputacion Guardada", //Titulo
+                            JOptionPane.INFORMATION_MESSAGE);
+                    modeloTabla.addRow(new Object[]{
+                        fecha, concepto, montoFloat});
+
+                } else {
+                    JOptionPane.showMessageDialog(c, //Componente
+                            "Error: " + parseException.toString(), //Mensaje
+                            "Error al guardar la imputacion", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
+            }
+        });
+
+    }
+
+    private void cargarImputaciones() {
+        cargandoTxt.setText("Cargando imputaciones...");
+        final Component comp = this;
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Imputaciones");
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+
+            @Override
+            public void done(List<ParseObject> imputacionesParse, org.parse4j.ParseException parseException) {
+                cargandoTxt.setText("");
+                if (parseException == null) {
+                    if (imputacionesParse != null) {
+
+                        for (int i = 0; i < imputacionesParse.size(); i++) {
+                            ParseObject imputacionParse = imputacionesParse.get(i);
+
+                            Date fecha = imputacionParse.getDate("fecha");
+                            String fechaStr = General.formatoFecha.format(fecha);
+                            
+                            String concepto = imputacionParse.getString("concepto");
+                            float monto = (float) imputacionParse.getDouble("monto");
+
+                            modeloTabla.addRow(new Object[]{
+                                fechaStr, concepto, monto});
+
+                        }
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(comp, //Componente
+                            parseException.toString(), //Mensaje
+                            "Error al cargar las Imputaciones", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
+            }
+        });
+
+    }
+
+    private void limpiarForm() {
+        fechaTxt.setText("");
+        conceptoTxt.setText("");
+        montoTxt.setText("");
+        imputacionesTbl.clearSelection();
+
+    }
+
+    private void actualizarEtiquetas() {
+        
+        minLbl.setText(Float.toString(VentanaMaestra.CAJA.getMinimo()));
+        saldoLbl.setText(Float.toString(VentanaMaestra.CAJA.getSaldo()));
+
+        if (VentanaMaestra.CAJA.isMinOK()) {
+            estadoLbl.setText("OK");
+            estadoLbl.setForeground(Color.BLACK);
+        } else {
+            float montoMin = VentanaMaestra.CAJA.getMinimo();
+            float saldo = VentanaMaestra.CAJA.getSaldo();
+            float diferencia = montoMin - saldo;
+
+            estadoLbl.setText("FALTAN $" + diferencia);
+            estadoLbl.setForeground(Color.RED);
+        }
+    }
+
+    private boolean validarForm() {
+
+        //Validar que la fecha no esté vacía
+        if (fechaTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "La fecha no puede estar vacia",
+                    "Completar Fecha", JOptionPane.WARNING_MESSAGE);
+            fechaTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que la fecha tenga formato dd/MM/yyyy
+        try {
+            General.formatoFecha.parse(fechaTxt.getText());
+        } catch (java.text.ParseException ex) {
+            JOptionPane.showMessageDialog(this,
+                    "El formato de fcha de ser DD/MM/AAAA",
+                    "Mal formato de fecha", JOptionPane.WARNING_MESSAGE);
+            fechaTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que el concepto no esté vacío
+        if (conceptoTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "El concepto no puede estar vacio",
+                    "Completar Concepto", JOptionPane.WARNING_MESSAGE);
+            conceptoTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que el monto no esté vacío
+        if (montoTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "El Monto no puede estar vacio",
+                    "Completar Monto", JOptionPane.WARNING_MESSAGE);
+            montoTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que el monto sea un numero decimal
+        try {
+            Float.parseFloat(montoTxt.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "El monto debe ser un numero decimal",
+                    "Corregir Monto", JOptionPane.WARNING_MESSAGE);
+            montoTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que el monto sea un numero positivo
+        if (Float.parseFloat(montoTxt.getText()) < 0) {
+            JOptionPane.showMessageDialog(this,
+                    "El Monto debe ser un numero positivo. \n"
+                    + "Considera ingresar la operacion inversa.",
+                    "Corregir Monto", JOptionPane.WARNING_MESSAGE);
+            montoTxt.requestFocus();
+            return false;
+        }
+
+        return true;
+
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton agregarEgresoBtn;
+    private javax.swing.JButton agregarIngresoBtn;
+    private javax.swing.JLabel cargandoTxt;
+    private javax.swing.JTextField conceptoTxt;
+    private javax.swing.JLabel estadoLbl;
+    private javax.swing.JTextField fechaTxt;
+    private javax.swing.JTable imputacionesTbl;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable3;
-    private javax.swing.JTable jTable5;
-    private javax.swing.JTable jTable6;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
+    private javax.swing.JLabel minLbl;
+    private javax.swing.JTextField montoTxt;
+    private javax.swing.JLabel saldoLbl;
     // End of variables declaration//GEN-END:variables
+
 }

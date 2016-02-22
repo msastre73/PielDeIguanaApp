@@ -5,17 +5,14 @@
  */
 package com.pdi.negocio.controlador;
 
-import org.parse4j.Parse;
-import org.parse4j.ParseException;
-import org.parse4j.ParseObject;
-import org.parse4j.callback.SaveCallback;
+
+import com.backendless.Backendless;
 import com.pdi.UI.VentanaMaestra;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-import com.pdi.util.General;
-import java.util.Date;
+
 
 /**
  *
@@ -40,9 +37,12 @@ public class Programa {
             Logger.getLogger(Programa.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        //Inicializa Parse
-        Parse.initialize("vlggVnYS02godcofnSC4limZG7XMOc5I4VMcSz0B", //App ID
-                "uotLx4R6kPfs9PNLXnxDdzyAC7NiQmhaG4hL7BIL"); //REST API key
+        //Inicializa Backendeless
+        Backendless.initApp(
+                "6A7ADC93-D77A-7657-FFB3-0C6CEAA4BC00", //application-id 
+                "EA6346BD-5299-D2C3-FF57-F77ED11B3400", //secret-key
+                "v1" //version
+        );
 
         //Abre la ventana maestra
         VentanaMaestra v = new VentanaMaestra();
