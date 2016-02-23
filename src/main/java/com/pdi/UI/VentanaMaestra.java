@@ -5,6 +5,9 @@
  */
 package com.pdi.UI;
 
+import com.backendless.Backendless;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
 import com.pdi.negocio.entidades.finales.Caja;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -29,7 +32,7 @@ public class VentanaMaestra extends javax.swing.JFrame {
 
     public VentanaMaestra() {
         initComponents();
-        //initCAJA(this);
+        initCAJA(this);
     }
 
     /**
@@ -289,29 +292,27 @@ public class VentanaMaestra extends javax.swing.JFrame {
     }
 
     private void initCAJA(final Component c) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Caja");
+        Backendless.Persistence.of(Caja.class).findById("2D2F42A3-414A-151E-FF52-31BC7E80E500",
+                new AsyncCallback<Caja>() {
 
-        query.getInBackground("YLhTsAUPpm", new GetCallback<ParseObject>() {
+                    public void handleResponse(Caja cajaBackendless) {
+                        CAJA.setMinimo(cajaBackendless.getMinimo());
+                        CAJA.setSaldo(cajaBackendless.getSaldo());
+                        CAJA.setMinOK(cajaBackendless.isMinOK());
+}
 
-            @Override
-            public void done(ParseObject cajaParse, ParseException parseException) {
-                if (parseException == null) {
-                    System.out.println(cajaParse.getBoolean("minOk"));
-                    System.out.println(cajaParse.getDouble("minimo"));
-                    System.out.println(cajaParse.getDouble("saldo"));
-                    
-                    CAJA.setMinOK(cajaParse.getBoolean("minOk"));
-                    CAJA.setMinimo((float) cajaParse.getDouble("minimo"));
-                    CAJA.setSaldo((float) cajaParse.getDouble("saldo"));
+                    public void handleFault(BackendlessFault bf) {
+                        JOptionPane.showMessageDialog(c, //Componente
+                                "Error al cargar la caja", //Mensaje
+                                bf.getMessage(), //Titulo
+                                JOptionPane.WARNING_MESSAGE); //Imagen 
 
-                } else {
-                    JOptionPane.showMessageDialog(c, //Componente
-                            parseException.toString(), //Mensaje
-                            "Error al cargar la caja", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-                }
-            }
-        });
+                    }
+                });
+
+        
+        
+        
 
     }
 

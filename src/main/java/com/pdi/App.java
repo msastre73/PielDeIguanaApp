@@ -4,6 +4,7 @@ import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.messaging.MessageStatus;
+import com.pdi.negocio.entidades.finales.Caja;
 import com.pdi.negocio.entidades.finales.Cliente;
 import com.pdi.negocio.entidades.finales.Evento;
 import java.util.ArrayList;
@@ -124,8 +125,8 @@ public class App {
                         + "\nMsj: " + fault.getMessage());
             }
         });*/
-        TestFrame v = new TestFrame();
-        v.setVisible(true);
+        //TestFrame v = new TestFrame();
+        //v.setVisible(true);
         
         
         

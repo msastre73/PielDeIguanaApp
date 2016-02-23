@@ -5,6 +5,14 @@
  */
 package com.pdi.UI;
 
+import com.backendless.Backendless;
+import com.backendless.BackendlessCollection;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.BackendlessDataQuery;
+import com.backendless.persistence.QueryOptions;
+import com.backendless.push.BackendlessBroadcastReceiver;
+import com.pdi.negocio.entidades.finales.Imputacion;
 import com.pdi.util.General;
 import java.awt.Color;
 import java.awt.Component;
@@ -13,12 +21,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import org.parse4j.ParseObject;
-import org.parse4j.ParseQuery;
-import org.parse4j.callback.FindCallback;
-import org.parse4j.callback.SaveCallback;
 
 /**
  *
@@ -40,7 +45,6 @@ public class CajaVentana extends javax.swing.JInternalFrame {
     private final String[] colName = new String[]{
         "Fecha", "Concepto", "Monto"};
 
-    
     //Modelo para controlar la info de la tabla
     DefaultTableModel modeloTabla = new DefaultTableModel(null, colName);
 
@@ -278,18 +282,15 @@ public class CajaVentana extends javax.swing.JInternalFrame {
 
         if (validacionOK) {
 
-//Si es valida la imputacion en la caja continua
+            //Si es valida la imputacion en la caja continua
             boolean imputacionOK = VentanaMaestra.CAJA.imputarIngreso(
                     Float.parseFloat(montoTxt.getText()), this);
 
             if (imputacionOK) {
-                //Agrega la imputacion en la tabla y en Parse
+                //Agrega la imputacion en la tabla y en Backendless
                 agregar(INGRESO_COD, this,
                         fechaTxt.getText(), conceptoTxt.getText(), montoTxt.getText());
 
-                actualizarEtiquetas();
-
-                limpiarForm();
             }
 
         }
@@ -307,13 +308,10 @@ public class CajaVentana extends javax.swing.JInternalFrame {
                     Float.parseFloat(montoTxt.getText()), this);
 
             if (imputacionOK) {
-                //Agrega la imputacion en la tabla y en Parse
+                //Agrega la imputacion en la tabla y en Backendless
                 agregar(EGRESO_COD, this,
                         fechaTxt.getText(), conceptoTxt.getText(), montoTxt.getText());
 
-                actualizarEtiquetas();
-
-                limpiarForm();
             }
 
         }
@@ -326,78 +324,88 @@ public class CajaVentana extends javax.swing.JInternalFrame {
     public void agregar(int cod, final Component c,
             final String fecha, final String concepto, String monto) {
 
-        //Monto en flot para guardarlo en Parse y en tabla
-        final float montoFloat = Float.parseFloat(monto) * cod;
-
         cargandoTxt.setText("Guardando imputacion...");
 
-        final ParseObject imputacionParse = new ParseObject("Imputaciones");
-        imputacionParse.put("codigo", cod);
+        //Esta variable se declara null para evitar tener que poner todo el codigo
+        //en la clausula try, teniendo en cuenta que nunca va a llegar al catch
+        //porque la fecha ya fue validada.
+        Date fechaImputacion = null;
+
+        //Se pasan los String de monto y fecha a sus respectivas clases
+        final float montoImputacion = Float.parseFloat(monto) * cod;
         try {
-            imputacionParse.put("fecha", General.formatoFecha.parse(fecha));
+            fechaImputacion = General.formatoFecha.parse(fecha);
         } catch (ParseException ex) {
             //Nunca se llega aca porque la fecha ya esta validada;
         }
-        imputacionParse.put("concepto", concepto);
-        imputacionParse.put("monto", montoFloat);
 
-        imputacionParse.saveInBackground(new SaveCallback() {
+        Imputacion imputacion = new Imputacion();
+        imputacion.setMonto(montoImputacion);
+        imputacion.setFecha(fechaImputacion);
+        imputacion.setConcepto(concepto);
 
-            @Override
-            public void done(org.parse4j.ParseException parseException) {
+        Backendless.Persistence.save(imputacion, new AsyncCallback<Imputacion>() {
+
+            public void handleResponse(Imputacion t) {
                 cargandoTxt.setText("");
-                if (parseException == null) {
-                    JOptionPane.showMessageDialog(c, //Componente
-                            "Imputacion Guardada Correctamente", //Mensaje
-                            "Imputacion Guardada", //Titulo
-                            JOptionPane.INFORMATION_MESSAGE);
-                    modeloTabla.addRow(new Object[]{
-                        fecha, concepto, montoFloat});
-
-                } else {
-                    JOptionPane.showMessageDialog(c, //Componente
-                            "Error: " + parseException.toString(), //Mensaje
-                            "Error al guardar la imputacion", //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-                }
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Imputacion Guardada Correctamente", //Mensaje
+                        "Imputacion Guardada", //Titulo
+                        JOptionPane.INFORMATION_MESSAGE);
+                modeloTabla.addRow(new Object[]{
+                    fecha, concepto, montoImputacion});
+                actualizarEtiquetas();
+                limpiarForm();
             }
+
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                JOptionPane.showMessageDialog(c, //Componente
+                        "Error: " + bf.getMessage(), //Mensaje
+                        "Error al guardar la imputacion", //Titulo
+                        JOptionPane.WARNING_MESSAGE); //Imagen 
+            }
+
         });
 
     }
 
     private void cargarImputaciones() {
         cargandoTxt.setText("Cargando imputaciones...");
-        final Component comp = this;
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Imputaciones");
+        BackendlessDataQuery dataQuery = new BackendlessDataQuery();
+        QueryOptions descOrder = new QueryOptions("created asc");
+        dataQuery.setQueryOptions(descOrder);
 
-        query.findInBackground(new FindCallback<ParseObject>() {
+        Backendless.Persistence.of(Imputacion.class).find(dataQuery, new AsyncCallback<BackendlessCollection<Imputacion>>() {
 
-            @Override
-            public void done(List<ParseObject> imputacionesParse, org.parse4j.ParseException parseException) {
+            public void handleResponse(BackendlessCollection<Imputacion> imputacionesBackendless) {
                 cargandoTxt.setText("");
-                if (parseException == null) {
-                    if (imputacionesParse != null) {
+                if (imputacionesBackendless != null) {
+                    List<Imputacion> imputacionesList = imputacionesBackendless.getData();
+                    for (int i = 0; i < imputacionesList.size(); i++) {
+                        Imputacion imp = imputacionesList.get(i);
 
-                        for (int i = 0; i < imputacionesParse.size(); i++) {
-                            ParseObject imputacionParse = imputacionesParse.get(i);
+                        modeloTabla.addRow(new Object[]{
+                            General.formatoFecha.format(imp.getFecha()),
+                            imp.getConcepto(),
+                            imp.getMonto()});
 
-                            Date fecha = imputacionParse.getDate("fecha");
-                            String fechaStr = General.formatoFecha.format(fecha);
-                            
-                            String concepto = imputacionParse.getString("concepto");
-                            float monto = (float) imputacionParse.getDouble("monto");
-
-                            modeloTabla.addRow(new Object[]{
-                                fechaStr, concepto, monto});
-
-                        }
                     }
+                }
 
-                } else {
-                    JOptionPane.showMessageDialog(comp, //Componente
-                            parseException.toString(), //Mensaje
-                            "Error al cargar las Imputaciones", //Titulo
+            }
+
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                //Si aun no se cargaron objetos de esta clase, arroja un error
+                //conocido por esto. En caso de que se trate de este error el que
+                //ocasiono la BackendlessFault esta todo en orden, por lo tanto se
+                //saltea.
+                if (!bf.getCode().equals(General.COD_SIN_CLASE)) {
+                    JOptionPane.showMessageDialog(CajaVentana.this, //Componente
+                            bf.getMessage(), //Mensaje
+                            "Error al cargar las imputaciones", //Titulo
                             JOptionPane.WARNING_MESSAGE); //Imagen
                 }
             }
@@ -414,7 +422,7 @@ public class CajaVentana extends javax.swing.JInternalFrame {
     }
 
     private void actualizarEtiquetas() {
-        
+
         minLbl.setText(Float.toString(VentanaMaestra.CAJA.getMinimo()));
         saldoLbl.setText(Float.toString(VentanaMaestra.CAJA.getSaldo()));
 

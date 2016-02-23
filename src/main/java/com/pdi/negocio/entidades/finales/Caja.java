@@ -5,9 +5,12 @@
  */
 package com.pdi.negocio.entidades.finales;
 
+import com.backendless.Backendless;
+import com.backendless.async.callback.AsyncCallback;
+import com.backendless.exceptions.BackendlessFault;
 import java.awt.Component;
+import java.util.Date;
 import javax.swing.JOptionPane;
-
 
 /**
  *
@@ -16,7 +19,9 @@ import javax.swing.JOptionPane;
 public class Caja {
 
     //Atributos
-
+    private String objectId;
+    private Date created;
+    private Date updated;
     private float saldo;
     private float minimo;
     private boolean minOK;
@@ -25,7 +30,10 @@ public class Caja {
     public Caja() {
     }
 
-    public Caja(float saldo, float minimo, boolean minOK) {
+    public Caja(String objectId, Date created, Date updated, float saldo, float minimo, boolean minOK) {
+        this.objectId = objectId;
+        this.created = created;
+        this.updated = updated;
         this.saldo = saldo;
         this.minimo = minimo;
         this.minOK = minOK;
@@ -40,18 +48,16 @@ public class Caja {
                     JOptionPane.WARNING_MESSAGE); //Imagen
             return false;
         } else {
-            
+
             if ((saldo + monto) >= minimo) {
-            minOK = true;
+                minOK = true;
             }
-            
+
             saldo += monto;
-            actualizarParse(c);
+            actualizarBackendless(c);
             return true;
-        } 
-            
-            
-        
+        }
+
     }
 
     public boolean imputarEgreso(float monto, Component c) {
@@ -74,49 +80,80 @@ public class Caja {
 
         if ((saldo - monto) < minimo) {
             minOK = false;
-        } 
+        }
         saldo -= monto;
 
-        actualizarParse(c);
+        actualizarBackendless(c);
         return true;
 
     }
 
-    private void actualizarParse(final Component c) {
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Caja");
-        query.getInBackground("YLhTsAUPpm", new GetCallback<ParseObject>() {
+    private void actualizarBackendless(final Component c) {
+        Backendless.Persistence.of(Caja.class).findById("2D2F42A3-414A-151E-FF52-31BC7E80E500",
+                new AsyncCallback<Caja>() {
 
-            @Override
-            public void done(ParseObject cajaParse, ParseException parseException) {
-                if (parseException == null) {
-                    cajaParse.put("saldo", saldo);
-                    cajaParse.put("minimo", minimo);
-                    cajaParse.put("minOk", minOK);
+                    public void handleResponse(Caja cajaBackendless) {
+                        cajaBackendless.setSaldo(saldo);
+                        cajaBackendless.setMinimo(minimo);
+                        cajaBackendless.setMinOK(minOK);
 
-                    cajaParse.saveInBackground(new SaveCallback() {
+                        Backendless.Persistence.save(cajaBackendless, new AsyncCallback<Caja>() {
 
-                        @Override
-                        public void done(ParseException parseException) {
-                            if (parseException != null) {
+                            public void handleResponse(Caja t) {
+                                System.out.println("Caja guardada correctamente");
+                            }
+
+                            public void handleFault(BackendlessFault bf) {
                                 JOptionPane.showMessageDialog(c, //Componente
                                         "Error al actuaizar la caja", //Mensaje
-                                        parseException.toString(), //Titulo
-                                        JOptionPane.WARNING_MESSAGE); //Imagen
+                                        bf.getMessage(), //Titulo
+                                        JOptionPane.WARNING_MESSAGE); //Imagen 
                             }
-                        }
-                    });
-                } else {
-                    JOptionPane.showMessageDialog(c, //Componente
-                            "Error al actuaizar la caja", //Mensaje
-                            parseException.toString(), //Titulo
-                            JOptionPane.WARNING_MESSAGE); //Imagen
-                }
-            }
-        });
+
+                        });
+
+                    }
+
+                    public void handleFault(BackendlessFault bf) {
+                        JOptionPane.showMessageDialog(c, //Componente
+                                "Error al actuaizar la caja", //Mensaje
+                                bf.getMessage(), //Titulo
+                                JOptionPane.WARNING_MESSAGE); //Imagen 
+
+                    }
+                });
+
 
     }
 
+   
+
     //Getters y Setters
+
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+
     public float getSaldo() {
         return saldo;
     }
