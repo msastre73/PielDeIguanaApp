@@ -125,8 +125,8 @@ public class App {
                         + "\nMsj: " + fault.getMessage());
             }
         });*/
-        //TestFrame v = new TestFrame();
-        //v.setVisible(true);
+        TestFrame v = new TestFrame();
+        v.setVisible(true);
         
         
         

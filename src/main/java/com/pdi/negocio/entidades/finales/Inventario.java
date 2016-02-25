@@ -6,6 +6,7 @@
 package com.pdi.negocio.entidades.finales;
 
 import com.pdi.negocio.interfaces.Valuable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,10 +15,13 @@ import java.util.List;
  */
 public class Inventario implements Valuable{
     //Atributos
-    private List<InsumoBebida> bebidas;
+    private String objectId;
+    private Date created;
+    private Date updated;
+    private List<Bebida> bebidas;
     private List<Vaso> vasos;
     private List<Sorbete> sorbete;
-    private List<InsumoBebida> insumoBebidasMin;
+    private List<Bebida> insumoBebidasMin;
     private List<Vaso> vasosMin;
     private List<Sorbete> sorbetesMin;
     private boolean minOK;
@@ -27,9 +31,10 @@ public class Inventario implements Valuable{
     public Inventario() {
     }
 
-    public Inventario(List<InsumoBebida> bebidas, List<Vaso> vasos, 
-            List<Sorbete> sorbete, List<InsumoBebida> insumoBebidasMin,
-            List<Vaso> vasosMin, List<Sorbete> sorbetesMin, boolean minOK) {
+    public Inventario(String objectId, Date created, Date updated, List<Bebida> bebidas, List<Vaso> vasos, List<Sorbete> sorbete, List<Bebida> insumoBebidasMin, List<Vaso> vasosMin, List<Sorbete> sorbetesMin, boolean minOK) {
+        this.objectId = objectId;
+        this.created = created;
+        this.updated = updated;
         this.bebidas = bebidas;
         this.vasos = vasos;
         this.sorbete = sorbete;
@@ -38,6 +43,8 @@ public class Inventario implements Valuable{
         this.sorbetesMin = sorbetesMin;
         this.minOK = minOK;
     }
+
+    
     
     //Metodos
 
@@ -52,11 +59,37 @@ public class Inventario implements Valuable{
     
     //Getters y Setters
 
-    public List<InsumoBebida> getBebidas() {
+    public String getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
+    }
+    
+    
+
+    public List<Bebida> getBebidas() {
         return bebidas;
     }
 
-    public void setBebidas(List<InsumoBebida> bebidas) {
+    public void setBebidas(List<Bebida> bebidas) {
         this.bebidas = bebidas;
     }
 
@@ -76,11 +109,11 @@ public class Inventario implements Valuable{
         this.sorbete = sorbete;
     }
 
-    public List<InsumoBebida> getInsumoBebidasMin() {
+    public List<Bebida> getInsumoBebidasMin() {
         return insumoBebidasMin;
     }
 
-    public void setInsumoBebidasMin(List<InsumoBebida> insumoBebidasMin) {
+    public void setInsumoBebidasMin(List<Bebida> insumoBebidasMin) {
         this.insumoBebidasMin = insumoBebidasMin;
     }
 
