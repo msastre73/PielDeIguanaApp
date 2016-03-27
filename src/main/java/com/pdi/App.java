@@ -3,6 +3,7 @@ package com.pdi;
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.messaging.BodyParts;
 import com.backendless.messaging.MessageStatus;
 import com.pdi.negocio.entidades.finales.Caja;
 import com.pdi.negocio.entidades.finales.Cliente;
@@ -125,8 +126,26 @@ public class App {
                         + "\nMsj: " + fault.getMessage());
             }
         });*/
-        TestFrame v = new TestFrame();
-        v.setVisible(true);
+        //TestFrame v = new TestFrame();
+        //v.setVisible(true);
+       
+        /*BodyParts cuerpo = new BodyParts(null, "Esta vez va con <b><i>adjuntoo</i></b>");
+        String archivo = "PEPSICO - Plan de Negocios.pdf";
+        ArrayList<String> adjunto = new ArrayList<String>();
+        adjunto.add(archivo);
+        
+        
+        Backendless.Messaging.sendEmail("Prueba con Adjunto", cuerpo,
+                "marcossastre73@gmail.com", adjunto, new AsyncCallback<Void>() {
+
+            public void handleResponse(Void t) {
+                System.out.println("Mensaje enviado"); 
+            }
+
+            public void handleFault(BackendlessFault bf) {
+                System.out.println("Error: " + bf.getMessage());  
+            }
+        });*/
         
         
         

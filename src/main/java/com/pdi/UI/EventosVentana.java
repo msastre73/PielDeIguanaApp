@@ -9,6 +9,9 @@ import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.BackendlessDataQuery;
+import com.pdi.DAO.AliadosDAO;
+import com.pdi.DAO.ClientesDAO;
 import javax.swing.DefaultListModel;
 
 import com.pdi.negocio.entidades.finales.*;
@@ -16,7 +19,7 @@ import com.pdi.util.General;
 import com.pdi.negocio.enums.TipoDeEvento;
 import com.pdi.negocio.enums.EstadoDeEvento;
 import java.awt.Component;
-import java.util.List;
+import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 
 import javax.swing.JOptionPane;
@@ -33,7 +36,14 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     //Atrib para manejar si hay una ventana abierta de este tipo
     public static boolean abierta = false;
 
+    //Modelo de la lista de Eventos
     DefaultListModel modeloLista = new DefaultListModel();
+
+    //Modelo del ComboBox de Clientes
+    DefaultComboBoxModel<Cliente> modeloComboClientes = new DefaultComboBoxModel<Cliente>();
+
+    //Modelo del ComboBox de Aliados
+    DefaultComboBoxModel<Aliado> modeloComboAliados = new DefaultComboBoxModel<Aliado>();
 
     public EventosVentana() {
         //Pone en verdadero el atrib que controla si la ventana esta abierta
@@ -41,12 +51,15 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
         //Inicializa los componentes 
         initComponents();
-        //Relaciona el modelo con la lista
+        //Relaciona los modelos con sus elementos
         eventosList.setModel(modeloLista);
+        clienteCmb.setModel(modeloComboClientes);
+        aliadoCmb.setModel(modeloComboAliados);
+
         //Carga Todos los Datos
-        cargarEventos();
+        cargarEventosClientesAliados();
         cargarTiposDeEventos();
-        //TODO: cargarClientes();
+
         //TODO: cargarAliados();
         cargarEstados();
         System.out.println("Todos los elementos fueron cargados");
@@ -62,6 +75,32 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        nuevoClienteDlg = new javax.swing.JDialog();
+        guardarClienteBtn = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        nombreTxt = new javax.swing.JTextField();
+        jLabel14 = new javax.swing.JLabel();
+        apellidoTxt = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        mailTxt = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        descuentoTxt = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        cancelarClienteBtn = new javax.swing.JButton();
+        nuevoAliadoDlg = new javax.swing.JDialog();
+        guardarAliadoBtn = new javax.swing.JButton();
+        jLabel18 = new javax.swing.JLabel();
+        nombreATxt = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        apellidoATxt = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
+        mailATxt = new javax.swing.JTextField();
+        jLabel21 = new javax.swing.JLabel();
+        comisionTxt = new javax.swing.JTextField();
+        jLabel22 = new javax.swing.JLabel();
+        cancelarAliadoBtn = new javax.swing.JButton();
+        jLabel23 = new javax.swing.JLabel();
+        comisionAcumuladaTxt = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         eventosList = new javax.swing.JList();
@@ -106,6 +145,212 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         adeudadoTxt = new javax.swing.JTextField();
         generarOrdenDeCompraBtn = new javax.swing.JButton();
         cargandoTxt = new javax.swing.JLabel();
+
+        guardarClienteBtn.setText("Guardar");
+        guardarClienteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarClienteBtnActionPerformed(evt);
+            }
+        });
+
+        jLabel13.setText("Nombre:");
+
+        nombreTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nombreTxtActionPerformed(evt);
+            }
+        });
+
+        jLabel14.setText("Apellido");
+
+        jLabel15.setText("Mail:");
+
+        jLabel16.setText("Descuento (%):");
+
+        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel17.setText("Nuevo Cliente");
+
+        cancelarClienteBtn.setText("Cancelar");
+        cancelarClienteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarClienteBtnActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout nuevoClienteDlgLayout = new javax.swing.GroupLayout(nuevoClienteDlg.getContentPane());
+        nuevoClienteDlg.getContentPane().setLayout(nuevoClienteDlgLayout);
+        nuevoClienteDlgLayout.setHorizontalGroup(
+            nuevoClienteDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, nuevoClienteDlgLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel17)
+                .addGap(96, 96, 96))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, nuevoClienteDlgLayout.createSequentialGroup()
+                .addGroup(nuevoClienteDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(nuevoClienteDlgLayout.createSequentialGroup()
+                        .addGap(43, 43, 43)
+                        .addGroup(nuevoClienteDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(nuevoClienteDlgLayout.createSequentialGroup()
+                                .addComponent(jLabel16)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(descuentoTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 176, Short.MAX_VALUE))
+                            .addGroup(nuevoClienteDlgLayout.createSequentialGroup()
+                                .addComponent(jLabel13)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(nombreTxt))
+                            .addGroup(nuevoClienteDlgLayout.createSequentialGroup()
+                                .addComponent(jLabel14)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(apellidoTxt))
+                            .addGroup(nuevoClienteDlgLayout.createSequentialGroup()
+                                .addComponent(jLabel15)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(mailTxt))))
+                    .addGroup(nuevoClienteDlgLayout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(cancelarClienteBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(guardarClienteBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(35, 35, 35))
+        );
+        nuevoClienteDlgLayout.setVerticalGroup(
+            nuevoClienteDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(nuevoClienteDlgLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel17)
+                .addGap(18, 18, 18)
+                .addGroup(nuevoClienteDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(nombreTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(nuevoClienteDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel14)
+                    .addComponent(apellidoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(nuevoClienteDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(mailTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(nuevoClienteDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(descuentoTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
+                .addGroup(nuevoClienteDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelarClienteBtn)
+                    .addComponent(guardarClienteBtn))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        guardarAliadoBtn.setText("Guardar");
+        guardarAliadoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                guardarAliadoBtnActionPerformed(evt);
+            }
+        });
+
+        jLabel18.setText("Nombre:");
+
+        nombreATxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nombreATxtActionPerformed(evt);
+            }
+        });
+
+        jLabel19.setText("Apellido");
+
+        jLabel20.setText("Mail:");
+
+        jLabel21.setText("Comision (%):");
+
+        jLabel22.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel22.setText("Nuevo Aliado");
+
+        cancelarAliadoBtn.setText("Cancelar");
+        cancelarAliadoBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelarAliadoBtnActionPerformed(evt);
+            }
+        });
+
+        jLabel23.setText("Comision Acumulada ($):");
+
+        comisionAcumuladaTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comisionAcumuladaTxtActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout nuevoAliadoDlgLayout = new javax.swing.GroupLayout(nuevoAliadoDlg.getContentPane());
+        nuevoAliadoDlg.getContentPane().setLayout(nuevoAliadoDlgLayout);
+        nuevoAliadoDlgLayout.setHorizontalGroup(
+            nuevoAliadoDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, nuevoAliadoDlgLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel22)
+                .addGap(96, 96, 96))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, nuevoAliadoDlgLayout.createSequentialGroup()
+                .addGroup(nuevoAliadoDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(nuevoAliadoDlgLayout.createSequentialGroup()
+                        .addGap(43, 43, 43)
+                        .addGroup(nuevoAliadoDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(nuevoAliadoDlgLayout.createSequentialGroup()
+                                .addComponent(jLabel21)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(comisionTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
+                            .addGroup(nuevoAliadoDlgLayout.createSequentialGroup()
+                                .addComponent(jLabel18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(nombreATxt))
+                            .addGroup(nuevoAliadoDlgLayout.createSequentialGroup()
+                                .addComponent(jLabel19)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(apellidoATxt))
+                            .addGroup(nuevoAliadoDlgLayout.createSequentialGroup()
+                                .addComponent(jLabel20)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(mailATxt))
+                            .addGroup(nuevoAliadoDlgLayout.createSequentialGroup()
+                                .addComponent(jLabel23)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(comisionAcumuladaTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE))))
+                    .addGroup(nuevoAliadoDlgLayout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(cancelarAliadoBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(guardarAliadoBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(35, 35, 35))
+        );
+        nuevoAliadoDlgLayout.setVerticalGroup(
+            nuevoAliadoDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(nuevoAliadoDlgLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel22)
+                .addGap(18, 18, 18)
+                .addGroup(nuevoAliadoDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18)
+                    .addComponent(nombreATxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(nuevoAliadoDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel19)
+                    .addComponent(apellidoATxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(nuevoAliadoDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(mailATxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(nuevoAliadoDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comisionTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(nuevoAliadoDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comisionAcumuladaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(nuevoAliadoDlgLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelarAliadoBtn)
+                    .addComponent(guardarAliadoBtn))
+                .addGap(20, 20, 20))
+        );
 
         setClosable(true);
         setIconifiable(true);
@@ -276,6 +521,11 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
         nuevoClienteBtn.setText("Nuevo Cliente");
         nuevoClienteBtn.setEnabled(false);
+        nuevoClienteBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nuevoClienteBtnActionPerformed(evt);
+            }
+        });
 
         clienteCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         clienteCmb.setSelectedIndex(-1);
@@ -545,11 +795,20 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_lugarTxtActionPerformed
 
     private void nuevoAliadoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoAliadoBtnActionPerformed
-        // TODO add your handling code here:
+        nuevoAliadoDlg.setSize(320, 280);
+        int largo = this.getWidth() / 2;
+        int alto = this.getHeight() / 2;
+
+        int x = largo - (335 / 2);
+        int y = alto - (250 / 2);
+        nuevoAliadoDlg.setLocation(x, y);
+
+        nuevoAliadoDlg.setVisible(true);
     }//GEN-LAST:event_nuevoAliadoBtnActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         limpiarFormulario();
+        eventosList.clearSelection();
         habilitarDetalles();
         lugarTxt.requestFocus();
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -561,18 +820,23 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         if (validacionOK) {
             try {
                 Evento e = new Evento();
-
+                Cliente cAnterior = new Cliente();
+                Aliado aAnterior = null;
                 //Si hay algun evento seleccionado lo utiliza para actualizarlo
                 if (eventosList.getSelectedIndex() != -1) {
                     e = (Evento) eventosList.getSelectedValue();
                     esNuevo = false;
+                    cAnterior = e.getCliente();
+                    aAnterior = e.getAliado();
                 }
+
+                Cliente c = (Cliente) clienteCmb.getSelectedItem();
 
                 e.setLugar(lugarTxt.getText());
                 e.setFecha(General.formatoFecha.parse(fechaTxt.getText()));
                 e.setCantidadDePersonas(Integer.parseInt(personasTxt.getText()));
                 e.setTipoDeEvento((TipoDeEvento) tipoDeEventoCmb.getSelectedItem());
-                //e.setCliente((Cliente) clienteCmb.getSelectedItem());
+                e.setCliente(c);
 
                 if (aliadoCmb.getSelectedIndex() != -1) {
                     e.setAliado((Aliado) aliadoCmb.getSelectedItem());
@@ -599,10 +863,11 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 }
 
                 if (esNuevo) {
-                    agregar(e, this);
+                    agregar(e, this, c, e.getAliado());
 
                 } else {
-                    editar(e, this);
+                    Aliado alyTest = e.getAliado();
+                    editar(e, this, c, cAnterior, e.getAliado(), aAnterior);
                 }
 
                 deshabilitarDetalles();
@@ -626,6 +891,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formInternalFrameClosed
 
     private void eventosListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_eventosListMouseClicked
+        limpiarFormulario();
         //Activa los botones correspondientes
         editarBtn.setEnabled(true);
         eliminarBtn.setEnabled(true);
@@ -639,8 +905,15 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         fechaTxt.setText(General.formatoFecha.format(e.getFecha()));
         personasTxt.setText(Integer.toString(e.getCantidadDePersonas()));
         tipoDeEventoCmb.setSelectedItem(e.getTipoDeEvento());
-        //eventoParse.performOperation("cliente", null);
-        //eventoParse.performOperation("aliado", null);
+        Cliente cliente = e.getCliente();
+        seleccionarClientePorID(cliente);
+
+        if (e.getAliado() != null) {
+            Aliado aliado = e.getAliado();
+            seleccionarAliadoPorID(aliado);
+
+        }
+
         precioTxt.setText(Float.toString(e.getPrecio()));
 
         if (e.getCosto() != 0) {
@@ -670,6 +943,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
     private void cancelarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarBtnActionPerformed
         limpiarFormulario();
+        eventosList.clearSelection();
         deshabilitarDetalles();
         //Deshabilita los botones restantes
         editarBtn.setEnabled(false);
@@ -693,6 +967,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         } else {
             eliminar(e, this);
             limpiarFormulario();
+            eventosList.clearSelection();
             editarBtn.setEnabled(false);
             eliminarBtn.setEnabled(false);
             generarPDFBtn.setEnabled(false);
@@ -701,6 +976,94 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
 
     }//GEN-LAST:event_eliminarBtnActionPerformed
+
+    private void nuevoClienteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoClienteBtnActionPerformed
+
+        nuevoClienteDlg.setSize(335, 250);
+        int largo = this.getWidth() / 2;
+        int alto = this.getHeight() / 2;
+
+        int x = largo - (335 / 2);
+        int y = alto - (250 / 2);
+        nuevoClienteDlg.setLocation(x, y);
+
+        //nuevoClienteDlg.setLocationRelativeTo(null);
+        nuevoClienteDlg.setVisible(true);
+
+
+    }//GEN-LAST:event_nuevoClienteBtnActionPerformed
+
+    private void guardarClienteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarClienteBtnActionPerformed
+        boolean validacionOK = ClientesDAO.validarForm(this, nombreTxt, apellidoTxt,
+                mailTxt, descuentoTxt);
+
+        if (validacionOK) {
+
+            Cliente c = new Cliente();
+            c.setNombre(nombreTxt.getText());
+            c.setApellido(apellidoTxt.getText());
+            c.setMail(mailTxt.getText());
+            if (!descuentoTxt.getText().equals("")) {
+                c.setDescuento(Float.parseFloat(descuentoTxt.getText()));
+            }
+
+            ClientesDAO.agregar(c, this, cargandoTxt, modeloComboClientes, clienteCmb);
+            limpiarFormularioClientes();
+            nuevoClienteDlg.setVisible(false);
+
+        }
+
+
+    }//GEN-LAST:event_guardarClienteBtnActionPerformed
+
+    private void nombreTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nombreTxtActionPerformed
+
+    private void cancelarClienteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarClienteBtnActionPerformed
+        limpiarFormularioClientes();
+        nuevoClienteDlg.setVisible(false);
+    }//GEN-LAST:event_cancelarClienteBtnActionPerformed
+
+    private void guardarAliadoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarAliadoBtnActionPerformed
+        boolean validacionOK = AliadosDAO.validarForm(this, nombreATxt, apellidoATxt,
+                mailATxt, comisionTxt, comisionAcumuladaTxt);
+
+        if (validacionOK) {
+
+            Aliado a = new Aliado();
+
+            a.setNombre(nombreATxt.getText());
+            a.setApellido(apellidoATxt.getText());
+            a.setMail(mailATxt.getText());
+
+            if (!comisionTxt.getText().equals("")) {
+                a.setComisionPorcentaje(Float.parseFloat(comisionTxt.getText()));
+            }
+
+            if (!comisionAcumuladaTxt.getText().equals("")) {
+                a.setComisionMonto(Float.parseFloat(comisionAcumuladaTxt.getText()));
+            }
+
+            AliadosDAO.agregar(a, this, cargandoTxt, modeloComboAliados, aliadoCmb);
+            limpiarFormularioAliados();
+            nuevoAliadoDlg.setVisible(false);
+        }
+
+    }//GEN-LAST:event_guardarAliadoBtnActionPerformed
+
+    private void nombreATxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nombreATxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nombreATxtActionPerformed
+
+    private void cancelarAliadoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarAliadoBtnActionPerformed
+        limpiarFormularioAliados();
+        nuevoAliadoDlg.setVisible(false);
+    }//GEN-LAST:event_cancelarAliadoBtnActionPerformed
+
+    private void comisionAcumuladaTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comisionAcumuladaTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comisionAcumuladaTxtActionPerformed
 
     private void habilitarDetalles() {
         lugarTxt.setEnabled(true);
@@ -758,19 +1121,35 @@ public class EventosVentana extends javax.swing.JInternalFrame {
         clienteCmb.setSelectedIndex(-1);
         aliadoCmb.setSelectedIndex(-1);
         estadoCmb.setSelectedIndex(-1);
-        eventosList.clearSelection();
 
     }
 
+    private void limpiarFormularioClientes() {
+        nombreTxt.setText("");
+        apellidoTxt.setText("");
+        mailTxt.setText("");
+        descuentoTxt.setText("");
+
+    }
+
+    private void limpiarFormularioAliados() {
+        nombreATxt.setText("");
+        apellidoATxt.setText("");
+        mailATxt.setText("");
+        comisionTxt.setText("");
+        comisionAcumuladaTxt.setText("");
+    }
+
     //Guardar el Evento en Parse
-    private void agregar(final Evento e, final Component c) {
+    private void agregar(final Evento e, final Component comp,
+            final Cliente c, final Aliado a) {
         cargandoTxt.setText("Guardando evento...");
 
         Backendless.Persistence.save(e, new AsyncCallback<Evento>() {
 
             public void handleResponse(Evento eventoGuardado) {
                 cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(c, //Componente
+                JOptionPane.showMessageDialog(comp, //Componente
                         "Evento Guardado Correctamente", //Mensaje
                         "Evento Guardado", //Titulo
                         JOptionPane.INFORMATION_MESSAGE); //Imagen
@@ -780,13 +1159,18 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 modeloLista.addElement(e);
                 eventosList.setSelectedValue(e, true);
                 System.out.println("Objeto guardado con ID: " + e.getObjectId());
+                ClientesDAO.agregarEvento(comp, c, e);
+                if (a != null) {
+                    AliadosDAO.agregarEvento(comp, a, e);
+                }
+
             }
 
             public void handleFault(BackendlessFault bf) {
                 cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(c, //Componente
+                JOptionPane.showMessageDialog(comp, //Componente
                         "Error: " + bf.getMessage(), //Mensaje
-                        "Error al guardar el evento", //Titulo
+                        "OTRO! Error al guardar el evento", //Titulo
                         JOptionPane.WARNING_MESSAGE); //Imagen
             }
 
@@ -795,27 +1179,39 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     }
 
     //Edita un evento existente (El Evento e tiene que contar con objectID)
-    private void editar(final Evento e, final Component c) {
+    private void editar(final Evento e, final Component comp,
+            final Cliente c, final Cliente cAnterior,
+            final Aliado a, final Aliado aAnterior) {
         cargandoTxt.setText("Editando evento...");
 
         Backendless.Persistence.save(e, new AsyncCallback<Evento>() {
 
             public void handleResponse(Evento eventoGuardado) {
                 cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(c, //Componente
+                JOptionPane.showMessageDialog(comp, //Componente
                         "Evento Editado Correctamente", //Mensaje
                         "Evento Guardado", //Titulo
                         JOptionPane.INFORMATION_MESSAGE); //Imagen
 
                 System.out.println("Objeto ID: " + e.getObjectId() + " editado");
                 eventosList.setSelectedValue(e, true);
+                ClientesDAO.modificarEvento(comp, c, cAnterior, e);
+                //Si antes no habia un aliado, pero ahora si, le asigna el Evento
+                if (aAnterior == null && a != null) {
+                    AliadosDAO.agregarEvento(comp, a, e);
+                }
+                //Si antes habia aliado y ahora tambien, lo modifica
+                if (aAnterior != null && a != null) {
+                    AliadosDAO.modificarEvento(comp, a, aAnterior, e);
+
+                }
             }
 
             public void handleFault(BackendlessFault bf) {
                 cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(c, //Componente
+                JOptionPane.showMessageDialog(comp, //Componente
                         "Error: " + bf.getMessage(), //Mensaje
-                        "Error al editar el evento", //Titulo
+                        "AQUI Error al editar el evento", //Titulo
                         JOptionPane.WARNING_MESSAGE); //Imagen
             }
 
@@ -862,19 +1258,94 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
     }
 
-    private void cargarEventos() {
+    private void cargarAliados() {
+        cargandoTxt.setText("Cargando Aliados...");
+
+        BackendlessDataQuery query = General.getQueryDepth2();
+        Backendless.Persistence.of(Aliado.class).find(query, new AsyncCallback<BackendlessCollection<Aliado>>() {
+
+            public void handleResponse(BackendlessCollection<Aliado> aliadosBackendless) {
+
+                if (aliadosBackendless != null) {
+                    ArrayList<Aliado> clientesList = (ArrayList) aliadosBackendless.getData();
+                    for (int i = 0; i < clientesList.size(); i++) {
+                        Aliado a = clientesList.get(i);
+                        modeloComboAliados.addElement(a);
+                    }
+                    cargandoTxt.setText("");
+                    aliadoCmb.setSelectedIndex(-1);
+                }
+            }
+
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                //Si aun no se cargaron objetos de esta clase, arroja un error
+                //conocido por esto. En caso de que se trate de este error el que
+                //ocasiono la BackendlessFault esta todo en orden, por lo tanto se
+                //saltea.
+                if (!bf.getCode().equals(General.COD_SIN_CLASE)) {
+                    JOptionPane.showMessageDialog(EventosVentana.this, //Componente
+                            bf.getMessage(), //Mensaje
+                            "Error al cargar los aliados", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
+            }
+        });
+    }
+
+    private void cargarClientesAliados() {
+        cargandoTxt.setText("Cargando Clientes...");
+
+        BackendlessDataQuery query = General.getQueryDepth2();
+
+        Backendless.Persistence.of(Cliente.class).find(query, new AsyncCallback<BackendlessCollection<Cliente>>() {
+
+            public void handleResponse(BackendlessCollection<Cliente> clientesBackendless) {
+
+                if (clientesBackendless != null) {
+                    ArrayList<Cliente> clientesList = (ArrayList) clientesBackendless.getData();
+                    for (int i = 0; i < clientesList.size(); i++) {
+                        Cliente c = clientesList.get(i);
+                        modeloComboClientes.addElement(c);
+                    }
+                    cargandoTxt.setText("");
+                    clienteCmb.setSelectedIndex(-1);
+                    cargarAliados();
+                }
+            }
+
+            public void handleFault(BackendlessFault bf) {
+                cargandoTxt.setText("");
+                //Si aun no se cargaron objetos de esta clase, arroja un error
+                //conocido por esto. En caso de que se trate de este error el que
+                //ocasiono la BackendlessFault esta todo en orden, por lo tanto se
+                //saltea.
+                if (!bf.getCode().equals(General.COD_SIN_CLASE)) {
+                    JOptionPane.showMessageDialog(EventosVentana.this, //Componente
+                            bf.getMessage(), //Mensaje
+                            "Error al cargar los clientes", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
+            }
+        });
+    }
+
+    private void cargarEventosClientesAliados() {
         cargandoTxt.setText("Cargando eventos...");
-        Backendless.Persistence.of(Evento.class).find(new AsyncCallback<BackendlessCollection<Evento>>() {
+
+        BackendlessDataQuery query = General.getQueryDepth2();
+        Backendless.Persistence.of(Evento.class).find(query, new AsyncCallback<BackendlessCollection<Evento>>() {
 
             public void handleResponse(BackendlessCollection<Evento> eventosBackendless) {
-                cargandoTxt.setText("");
+
                 if (eventosBackendless != null) {
-                    List<Evento> eventosList = eventosBackendless.getData();
+                    ArrayList<Evento> eventosList = (ArrayList) eventosBackendless.getData();
                     for (int i = 0; i < eventosList.size(); i++) {
                         Evento e = eventosList.get(i);
                         modeloLista.addElement(e);
                     }
-
+                    cargandoTxt.setText("");
+                    cargarClientesAliados();
                 }
             }
 
@@ -886,16 +1357,44 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 //ocasiono la BackendlessFault esta todo en orden, por lo tanto se
                 //saltea.
                 if (!bf.getCode().equals(General.COD_SIN_CLASE)) {
-                JOptionPane.showMessageDialog(EventosVentana.this, //Componente
-                        bf.getMessage(), //Mensaje
-                        "Error al cargar los eventos", //Titulo
-                        JOptionPane.WARNING_MESSAGE); //Imagen
-            }
+                    JOptionPane.showMessageDialog(EventosVentana.this, //Componente
+                            bf.getMessage(), //Mensaje
+                            "Error al cargar los eventos", //Titulo
+                            JOptionPane.WARNING_MESSAGE); //Imagen
+                }
 
             }
 
         });
 
+    }
+
+    private void seleccionarClientePorID(Cliente c) {
+        String idObjetivo = c.getObjectId();
+        for (int i = 0; i < modeloComboClientes.getSize(); i++) {
+            Cliente cl = (Cliente) clienteCmb.getItemAt(i);
+            String idIteracion = cl.getObjectId();
+
+            if (idObjetivo.equals(idIteracion)) {
+                clienteCmb.setSelectedIndex(i);
+                break;
+            }
+
+        }
+    }
+
+    private void seleccionarAliadoPorID(Aliado a) {
+        String idObjetivo = a.getObjectId();
+        for (int i = 0; i < modeloComboAliados.getSize(); i++) {
+            Aliado al = (Aliado) aliadoCmb.getItemAt(i);
+            String idIteracion = al.getObjectId();
+
+            if (idObjetivo.equals(idIteracion)) {
+                aliadoCmb.setSelectedIndex(i);
+                break;
+            }
+
+        }
     }
 
     //Validar los campos
@@ -1058,12 +1557,19 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField adeudadoTxt;
     private javax.swing.JComboBox aliadoCmb;
+    private javax.swing.JTextField apellidoATxt;
+    private javax.swing.JTextField apellidoTxt;
+    private javax.swing.JButton cancelarAliadoBtn;
     private javax.swing.JButton cancelarBtn;
+    private javax.swing.JButton cancelarClienteBtn;
     private javax.swing.JLabel cargandoTxt;
     private javax.swing.JComboBox clienteCmb;
+    private javax.swing.JTextField comisionAcumuladaTxt;
+    private javax.swing.JTextField comisionTxt;
     private javax.swing.JButton consumidoBtn;
     private javax.swing.JTextField costoTxt;
     private javax.swing.JButton cotizarBtn;
+    private javax.swing.JTextField descuentoTxt;
     private javax.swing.JButton editarBtn;
     private javax.swing.JButton eliminarBtn;
     private javax.swing.JComboBox estadoCmb;
@@ -1071,13 +1577,26 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     private javax.swing.JTextField fechaTxt;
     private javax.swing.JButton generarOrdenDeCompraBtn;
     private javax.swing.JButton generarPDFBtn;
+    private javax.swing.JButton guardarAliadoBtn;
     private javax.swing.JButton guardarBtn;
+    private javax.swing.JButton guardarClienteBtn;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1093,8 +1612,14 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField lugarTxt;
+    private javax.swing.JTextField mailATxt;
+    private javax.swing.JTextField mailTxt;
+    private javax.swing.JTextField nombreATxt;
+    private javax.swing.JTextField nombreTxt;
     private javax.swing.JButton nuevoAliadoBtn;
+    private javax.swing.JDialog nuevoAliadoDlg;
     private javax.swing.JButton nuevoClienteBtn;
+    private javax.swing.JDialog nuevoClienteDlg;
     private javax.swing.JTextField pagadoTxt;
     private javax.swing.JTextField personasTxt;
     private javax.swing.JTextField precioTxt;

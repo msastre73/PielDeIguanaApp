@@ -6,7 +6,7 @@
 package com.pdi.negocio.entidades.finales;
 
 import com.pdi.negocio.entidades.base.Persona;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  *
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class Cliente extends Persona{
     //Atributos
-    private List<Evento> eventos;
+    private ArrayList<Evento> eventos;
     private float descuento;
     
     //Constructores
@@ -22,7 +22,7 @@ public class Cliente extends Persona{
     public Cliente() {
     }
 
-    public Cliente(List<Evento> eventos, float descuento, String objectId, String nombre,
+    public Cliente(ArrayList<Evento> eventos, float descuento, String objectId, String nombre,
             String apellido, String mail) {
         super(objectId, nombre, apellido, mail);
         this.eventos = eventos;
@@ -49,11 +49,11 @@ public class Cliente extends Persona{
     
     //Getters y Setters
 
-    public List<Evento> getEventos() {
+    public ArrayList<Evento> getEventos() {
         return eventos;
     }
 
-    public void setEventos(List<Evento> eventos) {
+    public void setEventos(ArrayList<Evento> eventos) {
         this.eventos = eventos;
     }
 

@@ -9,10 +9,15 @@ import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.BackendlessDataQuery;
+import com.backendless.persistence.QueryOptions;
+import com.pdi.DAO.AliadosDAO;
 import com.pdi.negocio.entidades.finales.Aliado;
+import com.pdi.negocio.entidades.finales.Evento;
 import com.pdi.util.General;
 import java.awt.Component;
-import java.util.List;
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
@@ -29,11 +34,13 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
     public static boolean abierta = false;
 
     DefaultListModel modeloLista = new DefaultListModel();
+    DefaultListModel modeloListaEventos = new DefaultListModel();
 
     public AliadosVentana() {
         initComponents();
         //Relaciona el modelo con la lista
         aliadosList.setModel(modeloLista);
+        eventosList.setModel(modeloListaEventos);
 
         cargarAliados();
     }
@@ -335,12 +342,14 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
 
     private void nuevoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoBtnActionPerformed
         limpiarForm();
+        aliadosList.clearSelection();
         habilitarDetalles();
         nombreTxt.requestFocus();
     }//GEN-LAST:event_nuevoBtnActionPerformed
 
     private void guardarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarBtnActionPerformed
-        boolean validacionOK = validarForm();
+        boolean validacionOK = AliadosDAO.validarForm(this, nombreTxt, apellidoTxt,
+                mailTxt, comisionTxt, comisionAcumuladaTxt);
         boolean esNuevo = true;
 
         if (validacionOK) {
@@ -364,9 +373,9 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
             }
 
             if (esNuevo) {
-                agregar(a, this);
+                AliadosDAO.agregar(a, this, cargandoTxt, modeloLista, aliadosList);
             } else {
-                editar(a, this);
+                AliadosDAO.editar(a, this, cargandoTxt, aliadosList);
             }
 
             deshabilitarDetalles();
@@ -378,6 +387,7 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
 
     private void cancelarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarBtnActionPerformed
         limpiarForm();
+        aliadosList.clearSelection();
         deshabilitarDetalles();
         //Dehabilita los otros botones
         editarBtn.setEnabled(false);
@@ -399,8 +409,9 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
         if (rta == JOptionPane.NO_OPTION) {
             return;
         } else {
-            eliminar(a, this);
+            AliadosDAO.eliminar(a, this, cargandoTxt, modeloLista );
             limpiarForm();
+            aliadosList.clearSelection();
             editarBtn.setEnabled(false);
             eliminarBtn.setEnabled(false);
 
@@ -410,6 +421,8 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_eliminarBtnActionPerformed
 
     private void aliadosListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_aliadosListMouseClicked
+        limpiarForm();
+        
         //Activa los botones correspondientes
         editarBtn.setEnabled(true);
         eliminarBtn.setEnabled(true);
@@ -428,105 +441,40 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
         if (a.getComisionMonto() != 0) {
             comisionAcumuladaTxt.setText(Float.toString(a.getComisionMonto()));
         }
+        
+        if (a.getEventos() != null){
+            ArrayList eventosDelAliado = a.getEventos();
+            for(int i = 0; i < eventosDelAliado.size(); i++){
+                Evento e = (Evento) eventosDelAliado.get(i);
+                modeloListaEventos.addElement(e);
+            }
+        }
 
-        //TODO: completar eventos
+        
     }//GEN-LAST:event_aliadosListMouseClicked
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
         abierta = false;
     }//GEN-LAST:event_formInternalFrameClosed
 
-    private void agregar(final Aliado a, final Component c) {
-        cargandoTxt.setText("Guardando aliado...");
-        Backendless.Persistence.save(a, new AsyncCallback<Aliado>() {
+    
 
-            public void handleResponse(Aliado aliadoGuardado) {
-                cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(c, //Componente
-                        "Aliado Guardado Correctamente", //Mensaje
-                        "Aliado Guardado", //Titulo
-                        JOptionPane.INFORMATION_MESSAGE); //Imagen
-                a.setObjectId(aliadoGuardado.getObjectId());
-                a.setUpdated(aliadoGuardado.getUpdated());
-                a.setCreated(aliadoGuardado.getCreated());
-                modeloLista.addElement(a);
-                aliadosList.setSelectedValue(a, true);
-                System.out.println("Objeto guardado con ID: " + a.getObjectId());
-            }
+    
 
-            public void handleFault(BackendlessFault bf) {
-                cargandoTxt.setText("");
-
-                JOptionPane.showMessageDialog(c, //Componente
-                        "Error: " + bf.getMessage(), //Mensaje
-                        "Error al guardar el aliado", //Titulo
-                        JOptionPane.WARNING_MESSAGE); //Imagen  
-
-            }
-
-        });
-    }
-
-    private void editar(final Aliado a, final Component c) {
-        cargandoTxt.setText("Editando aliado...");
-        Backendless.Persistence.save(a, new AsyncCallback<Aliado>() {
-
-            public void handleResponse(Aliado aliadoGuardado) {
-                cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(c, //Componente
-                        "Aliado Editado Correctamente", //Mensaje
-                        "Aliado Guardado", //Titulo
-                        JOptionPane.INFORMATION_MESSAGE); //Imagen
-                System.out.println("Objeto ID: " + a.getObjectId() + " editado");
-                aliadosList.setSelectedValue(a, true);
-
-            }
-
-            public void handleFault(BackendlessFault bf) {
-                cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(c, //Componente
-                        "Error: " + bf.getMessage(), //Mensaje
-                        "Error al editar el aliado", //Titulo
-                        JOptionPane.WARNING_MESSAGE); //Imagen
-            }
-
-        });
-
-    }
-
-    private void eliminar(final Aliado a, final Component c) {
-        cargandoTxt.setText("Eliminando aliado...");
-        Backendless.Persistence.of(Aliado.class).remove(a, new AsyncCallback<Long>() {
-
-            public void handleResponse(Long t) {
-                cargandoTxt.setText("");
-                System.out.println("Aliado con ID: " + a.getObjectId() + " eliminado");
-                JOptionPane.showMessageDialog(c, //Componente
-                        "Aliado Eliminado Correctamente", //Mensaje
-                        "Aliado Eliminado", //Titulo
-                        JOptionPane.INFORMATION_MESSAGE); //Imagen
-                modeloLista.removeElement(a);
-            }
-
-            public void handleFault(BackendlessFault bf) {
-                cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(c, //Componente
-                        "Error: " + bf.getMessage(), //Mensaje
-                        "Error al eliminar el Aliado", //Titulo
-                        JOptionPane.WARNING_MESSAGE); //Imagen  
-            }
-        });
-    }
-
+    
     private void cargarAliados() {
         cargandoTxt.setText("Cargando aliados...");
-
-        Backendless.Persistence.of(Aliado.class).find(new AsyncCallback<BackendlessCollection<Aliado>>() {
+        
+        
+        //Se establece la query con depth 2 para que traiga los eventos y sus clientes
+        BackendlessDataQuery query = General.getQueryDepth2();
+        
+        Backendless.Persistence.of(Aliado.class).find(query, new AsyncCallback<BackendlessCollection<Aliado>>() {
 
             public void handleResponse(BackendlessCollection<Aliado> aliadosBackendless) {
                 cargandoTxt.setText("");
                 if (aliadosBackendless != null) {
-                    List<Aliado> aliadosList = aliadosBackendless.getData();
+                    ArrayList<Aliado> aliadosList = (ArrayList) aliadosBackendless.getData();
                     for (int i = 0; i < aliadosList.size(); i++) {
                         Aliado e = aliadosList.get(i);
                         modeloLista.addElement(e);
@@ -552,72 +500,7 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
         });
     }
 
-    private boolean validarForm() {
-        //Validar que el nombre no este vacio
-        if (nombreTxt.getText().equals("")) {
-            JOptionPane.showMessageDialog(this,
-                    "El nombre no puede estar vacio",
-                    "Completar Nombre", JOptionPane.WARNING_MESSAGE);
-            nombreTxt.requestFocus();
-            return false;
-        }
-
-        //Vaidar que el apellido no este vacio
-        if (apellidoTxt.getText().equals("")) {
-            JOptionPane.showMessageDialog(this,
-                    "El apellido no puede estar vacio",
-                    "Completar Apellido", JOptionPane.WARNING_MESSAGE);
-            apellidoTxt.requestFocus();
-            return false;
-        }
-
-        //Validar que el mail no este vacio
-        if (mailTxt.getText().equals("")) {
-            JOptionPane.showMessageDialog(this,
-                    "El mail no puede estar vacio",
-                    "Completar Mail", JOptionPane.WARNING_MESSAGE);
-            mailTxt.requestFocus();
-            return false;
-        }
-
-        //Validar el formato del mail
-        if (!mailTxt.getText().matches(General.formatoMail)) {
-            JOptionPane.showMessageDialog(this,
-                    "Ingrese un mail valido",
-                    "Mail incorrecto", JOptionPane.WARNING_MESSAGE);
-            mailTxt.requestFocus();
-            return false;
-        }
-
-        //Validar que si hay comision, tenga formato decimal
-        if (!comisionTxt.getText().equals("")) {
-            try {
-                Float.parseFloat(comisionTxt.getText());
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this,
-                        "La comision debe ser un numero decimal",
-                        "Corregir Comision ", JOptionPane.WARNING_MESSAGE);
-                comisionTxt.requestFocus();
-                return false;
-            }
-        }
-
-        //Validar qe si hay comision acumulada, tenga formato decimal
-        if (!comisionAcumuladaTxt.getText().equals("")) {
-            try {
-                Float.parseFloat(comisionAcumuladaTxt.getText());
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this,
-                        "La comision acumulada debe ser un numero decimal",
-                        "Corregir Comision ", JOptionPane.WARNING_MESSAGE);
-                comisionAcumuladaTxt.requestFocus();
-                return false;
-            }
-        }
-
-        return true;
-
-    }
+ 
 
     private void habilitarDetalles() {
         nombreTxt.setEnabled(true);
@@ -649,8 +532,8 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
         mailTxt.setText("");
         comisionTxt.setText("");
         comisionAcumuladaTxt.setText("");
-        eventosList.removeAll();
-        aliadosList.clearSelection();
+        modeloListaEventos.removeAllElements();
+        
     }
 
 

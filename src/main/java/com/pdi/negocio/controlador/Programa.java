@@ -39,8 +39,8 @@ public class Programa {
         
         //Inicializa Backendeless
         Backendless.initApp(
-                "6A7ADC93-D77A-7657-FFB3-0C6CEAA4BC00", //application-id 
-                "EA6346BD-5299-D2C3-FF57-F77ED11B3400", //secret-key
+                "436619EC-61C6-B46C-FFE8-1E486BA58900", //application-id 
+                "5D2D087A-60F3-6191-FFE8-CFA168B0E000", //secret-key
                 "v1" //version
         );
 

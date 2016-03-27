@@ -5,6 +5,8 @@
  */
 package com.pdi.util;
 
+import com.backendless.persistence.BackendlessDataQuery;
+import com.backendless.persistence.QueryOptions;
 import java.awt.Font;
 import java.text.SimpleDateFormat;
 
@@ -25,6 +27,15 @@ public class General {
     
     public final static String formatoMail = 
             "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";
+    
+    public static BackendlessDataQuery getQueryDepth2(){
+        
+        BackendlessDataQuery query = new BackendlessDataQuery();
+        QueryOptions queryOptions = new QueryOptions();
+        queryOptions.setRelationsDepth(2);
+        query.setQueryOptions(queryOptions);
+        return query;
+    }
    
     
 }

@@ -191,9 +191,17 @@ public class Evento {
 
     @Override
     public String toString() {
-        return "Fecha: " + General.formatoFecha.format(fecha)
-                + "/ Cant: " + cantidadDePersonas
-                + "/ Precio: $" + precio;
+        if(aliado != null){
+            return tipoDeEvento + " de " + cliente.getNombre() + " " + cliente.getApellido()
+                    +" el " + General.formatoFecha.format(fecha) + " en "
+                    + lugar + ". " + estadoDeEvento + ". Aliado: " + aliado.getNombre()
+                    + " " + aliado.getApellido();
+        }else{
+           return tipoDeEvento + " de " + cliente.getNombre() + " " + cliente.getApellido()
+                    +" el " + General.formatoFecha.format(fecha) + " en "
+                    + lugar + ". " + estadoDeEvento + ". Sin aliado.";
+        }
+        
     }
 
 }

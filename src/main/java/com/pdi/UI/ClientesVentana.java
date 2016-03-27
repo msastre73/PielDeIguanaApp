@@ -1,4 +1,4 @@
-/*
+ /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -9,12 +9,20 @@ import com.backendless.Backendless;
 import com.backendless.BackendlessCollection;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.backendless.persistence.BackendlessDataQuery;
+import com.backendless.persistence.QueryOptions;
 import com.pdi.negocio.entidades.finales.Cliente;
+import com.pdi.DAO.ClientesDAO;
+import com.pdi.negocio.entidades.finales.Evento;
 import com.pdi.util.General;
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+
 
 /**
  *
@@ -27,12 +35,17 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
      */
     //Atrib para manejar si hay una ventana abierta de este tipo
     public static boolean abierta = false;
+    
+    //Modelo de la lista de Clientes
     DefaultListModel modeloLista = new DefaultListModel();
+    //Modelo de la lista de Eventos del cliente
+    DefaultListModel modeloListaEventos = new DefaultListModel();
 
     public ClientesVentana() {
         initComponents();
         //Relaciona el modelo con la lista
         clientesList.setModel(modeloLista);
+        eventosList.setModel(modeloListaEventos);
 
         cargarClientes();
 
@@ -318,12 +331,14 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
 
     private void nuevoBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevoBtnActionPerformed
         limpiarForm();
+        clientesList.clearSelection();
         habilitarDetalles();
         nombreTxt.requestFocus();
     }//GEN-LAST:event_nuevoBtnActionPerformed
 
     private void guardarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarBtnActionPerformed
-        boolean validacionOK = validarForm();
+        boolean validacionOK = ClientesDAO.validarForm(this, nombreTxt, apellidoTxt,
+                mailTxt, descuentoTxt);
         boolean esNuevo = true;
 
         if (validacionOK) {
@@ -343,9 +358,9 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
             }
 
             if (esNuevo) {
-                agregar(c, this);
+                ClientesDAO.agregar(c, this, cargandoTxt, modeloLista, clientesList);
             } else {
-                editar(c, this);
+                ClientesDAO.editar(c, this, cargandoTxt, clientesList);
             }
 
             deshabilitarDetalles();
@@ -355,6 +370,8 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_guardarBtnActionPerformed
 
     private void clientesListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_clientesListMouseClicked
+        limpiarForm();
+        
         //Activa los botones correspondientes
         editarBtn.setEnabled(true);
         eliminarBtn.setEnabled(true);
@@ -369,8 +386,30 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
         if (c.getDescuento() != 0) {
             descuentoTxt.setText(Float.toString(c.getDescuento()));
         }
-
-        //TODO: completar eventos
+        
+        String whereClause = "cliente.objectId='"
+                + c.getObjectId() + "'";
+        
+        BackendlessDataQuery query = General.getQueryDepth2();
+        query.setWhereClause(whereClause);
+        List<Evento> eventosDelCliente = Backendless.Persistence.of(
+                Evento.class).find(query).getData();
+        
+        
+        if(eventosDelCliente != null){
+             for(int i = 0; i < eventosDelCliente.size(); i++){
+                Evento e = (Evento) eventosDelCliente.get(i);
+                modeloListaEventos.addElement(e);
+            }
+        }
+        /*ArrayList eventos = c.getEventos();
+        if (c.getEventos() != null){
+            ArrayList eventosDelCliente = c.getEventos();
+            for(int i = 0; i < eventosDelCliente.size(); i++){
+                Evento e = (Evento) eventosDelCliente.get(i);
+                modeloListaEventos.addElement(e);
+            }
+        }*/
 
     }//GEN-LAST:event_clientesListMouseClicked
 
@@ -380,6 +419,7 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
 
     private void cancelarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelarBtnActionPerformed
         limpiarForm();
+        clientesList.clearSelection();
         deshabilitarDetalles();
         //Dehabilita los otros botones
         editarBtn.setEnabled(false);
@@ -403,8 +443,9 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
         if (rta == JOptionPane.NO_OPTION) {
             return;
         } else {
-            eliminar(c, this);
+            ClientesDAO.eliminar(c, this, cargandoTxt, modeloLista);
             limpiarForm();
+            clientesList.clearSelection();
             editarBtn.setEnabled(false);
             eliminarBtn.setEnabled(false);
 
@@ -438,155 +479,23 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
         apellidoTxt.setText("");
         mailTxt.setText("");
         descuentoTxt.setText("");
-        eventosList.removeAll();
-        clientesList.clearSelection();
+        modeloListaEventos.removeAllElements();
+        
     }
 
-    private void agregar(final Cliente c, final Component comp) {
-        cargandoTxt.setText("Guardando cliente...");
-        Backendless.Persistence.save(c, new AsyncCallback<Cliente>() {
-
-            public void handleResponse(Cliente clienteGuardado) {
-                cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(comp, //Componente
-                        "Cliente Guardado Correctamente", //Mensaje
-                        "Cliente Guardado", //Titulo
-                        JOptionPane.INFORMATION_MESSAGE); //Imagen
-                c.setObjectId(clienteGuardado.getObjectId());
-                c.setUpdated(clienteGuardado.getUpdated());
-                c.setCreated(clienteGuardado.getCreated());
-                modeloLista.addElement(c);
-                clientesList.setSelectedValue(c, true);
-                System.out.println("Objeto guardado con ID: " + c.getObjectId());
-            }
-
-            public void handleFault(BackendlessFault bf) {
-                cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(comp, //Componente
-                        "Error: " + bf.getMessage(), //Mensaje
-                        "Error al guardar el cliente", //Titulo
-                        JOptionPane.WARNING_MESSAGE); //Imagen
-            }
-
-        }
-        );
-    }
-
-    private void editar(final Cliente c, final Component comp) {
-        cargandoTxt.setText("Editando cliente...");
-
-        Backendless.Persistence.save(c, new AsyncCallback<Cliente>() {
-
-            public void handleResponse(Cliente clienteGuardado) {
-                cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(comp, //Componente
-                        "Cliente Editado Correctamente", //Mensaje
-                        "Cliente Guardado", //Titulo
-                        JOptionPane.INFORMATION_MESSAGE); //Imagen
-                System.out.println("Objeto ID: " + c.getObjectId() + "editado");
-                clientesList.setSelectedValue(c, true);
-            }
-
-            public void handleFault(BackendlessFault bf) {
-                cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(comp, //Componente
-                        "Error: " + bf.getMessage(), //Mensaje
-                        "Error al editar el cliente", //Titulo
-                        JOptionPane.WARNING_MESSAGE); //Imagen
-            }
-
-        }
-        );
-
-    }
-
-    private void eliminar(final Cliente c, final Component comp) {
-        cargandoTxt.setText("Eliminando cliente...");
-
-        Backendless.Persistence.of(Cliente.class).remove(c, new AsyncCallback<Long>() {
-
-            public void handleResponse(Long t) {
-                cargandoTxt.setText("");
-                System.out.println("Cliente con ID: " + c.getObjectId() + " eliminado");
-                JOptionPane.showMessageDialog(comp, //Componente
-                        "Cliente Eliminado Correctamente", //Mensaje
-                        "Cliente Eliminado", //Titulo
-                        JOptionPane.INFORMATION_MESSAGE); //Imagen
-                modeloLista.removeElement(c);
-            }
-
-            public void handleFault(BackendlessFault bf) {
-                cargandoTxt.setText("");
-                JOptionPane.showMessageDialog(comp, //Componente
-                        "Error: " + bf.getMessage(), //Mensaje
-                        "Error al eliminar el Cliente", //Titulo
-                        JOptionPane.WARNING_MESSAGE); //Imagen
-            }
-        });
-    }
-
-    private boolean validarForm() {
-        //Validar que el nombre no este vacio
-        if (nombreTxt.getText().equals("")) {
-            JOptionPane.showMessageDialog(this,
-                    "El nombre no puede estar vacio",
-                    "Completar Nombre", JOptionPane.WARNING_MESSAGE);
-            nombreTxt.requestFocus();
-            return false;
-        }
-
-        //Vaidar que el apellido no este vacio
-        if (apellidoTxt.getText().equals("")) {
-            JOptionPane.showMessageDialog(this,
-                    "El apellido no puede estar vacio",
-                    "Completar Apellido", JOptionPane.WARNING_MESSAGE);
-            apellidoTxt.requestFocus();
-            return false;
-        }
-
-        //Validar que el mail no este vacio
-        if (mailTxt.getText().equals("")) {
-            JOptionPane.showMessageDialog(this,
-                    "El mail no puede estar vacio",
-                    "Completar Mail", JOptionPane.WARNING_MESSAGE);
-            mailTxt.requestFocus();
-            return false;
-        }
-
-        //Validar el formato del mail
-        if (!mailTxt.getText().matches(General.formatoMail)) {
-            JOptionPane.showMessageDialog(this,
-                    "Ingrese un mail valido",
-                    "Mail incorrecto", JOptionPane.WARNING_MESSAGE);
-            mailTxt.requestFocus();
-            return false;
-        }
-
-        //Validar que si hay descuento, tenga formato decimal
-        if (!descuentoTxt.getText().equals("")) {
-            try {
-                Float.parseFloat(descuentoTxt.getText());
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this,
-                        "El descuento debe ser un numero decimal",
-                        "Corregir Comision", JOptionPane.WARNING_MESSAGE);
-                descuentoTxt.requestFocus();
-                return false;
-            }
-        }
-
-        return true;
-
-    }
-
+   
     private void cargarClientes() {
         cargandoTxt.setText("Cargando clientes...");
-        Backendless.Persistence.of(Cliente.class).find(new AsyncCallback<BackendlessCollection<Cliente>>() {
+        
+        //Se establece la query con depth 2 para que traiga los eventos y sus aliados
+        BackendlessDataQuery query = General.getQueryDepth2();
+        
+        Backendless.Persistence.of(Cliente.class).find(query, new AsyncCallback<BackendlessCollection<Cliente>>() {
 
             public void handleResponse(BackendlessCollection<Cliente> clientesBackendless) {
                 cargandoTxt.setText("");
                 if (clientesBackendless != null) {
-                    List<Cliente> clientesList = clientesBackendless.getData();
+                    ArrayList<Cliente> clientesList = (ArrayList) clientesBackendless.getData();
                     for (int i = 0; i < clientesList.size(); i++) {
                         Cliente c = clientesList.get(i);
                         modeloLista.addElement(c);
