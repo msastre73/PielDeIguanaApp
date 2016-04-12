@@ -17,6 +17,7 @@ import com.pdi.negocio.entidades.finales.Evento;
 import com.pdi.util.General;
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -442,13 +443,29 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
             comisionAcumuladaTxt.setText(Float.toString(a.getComisionMonto()));
         }
         
-        if (a.getEventos() != null){
+        String whereClause = "aliado.objectId='"
+                + a.getObjectId() + "'";
+        
+        BackendlessDataQuery query = General.getQueryDepth2();
+        query.setWhereClause(whereClause);
+        List<Evento> eventosDelAliado = Backendless.Persistence.of(
+                Evento.class).find(query).getData();
+        
+        
+        if(eventosDelAliado != null){
+             for(int i = 0; i < eventosDelAliado.size(); i++){
+                Evento e = (Evento) eventosDelAliado.get(i);
+                modeloListaEventos.addElement(e);
+            }
+        }
+        
+        /*if (a.getEventos() != null){
             ArrayList eventosDelAliado = a.getEventos();
             for(int i = 0; i < eventosDelAliado.size(); i++){
                 Evento e = (Evento) eventosDelAliado.get(i);
                 modeloListaEventos.addElement(e);
             }
-        }
+        }*/
 
         
     }//GEN-LAST:event_aliadosListMouseClicked

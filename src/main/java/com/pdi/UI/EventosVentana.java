@@ -1159,10 +1159,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 modeloLista.addElement(e);
                 eventosList.setSelectedValue(e, true);
                 System.out.println("Objeto guardado con ID: " + e.getObjectId());
-                ClientesDAO.agregarEvento(comp, c, e);
-                if (a != null) {
-                    AliadosDAO.agregarEvento(comp, a, e);
-                }
+               
 
             }
 
@@ -1195,16 +1192,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
                 System.out.println("Objeto ID: " + e.getObjectId() + " editado");
                 eventosList.setSelectedValue(e, true);
-                ClientesDAO.modificarEvento(comp, c, cAnterior, e);
-                //Si antes no habia un aliado, pero ahora si, le asigna el Evento
-                if (aAnterior == null && a != null) {
-                    AliadosDAO.agregarEvento(comp, a, e);
-                }
-                //Si antes habia aliado y ahora tambien, lo modifica
-                if (aAnterior != null && a != null) {
-                    AliadosDAO.modificarEvento(comp, a, aAnterior, e);
-
-                }
+                
             }
 
             public void handleFault(BackendlessFault bf) {

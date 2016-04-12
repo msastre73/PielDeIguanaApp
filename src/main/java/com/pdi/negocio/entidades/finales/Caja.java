@@ -89,7 +89,7 @@ public class Caja {
     }
 
     private void actualizarBackendless(final Component c) {
-        Backendless.Persistence.of(Caja.class).findById("2D2F42A3-414A-151E-FF52-31BC7E80E500",
+        Backendless.Persistence.of(Caja.class).findById("60F4BCD9-7C85-AA78-FF4C-4C86DD1BAE00",
                 new AsyncCallback<Caja>() {
 
                     public void handleResponse(Caja cajaBackendless) {
@@ -105,8 +105,8 @@ public class Caja {
 
                             public void handleFault(BackendlessFault bf) {
                                 JOptionPane.showMessageDialog(c, //Componente
-                                        "Error al actuaizar la caja", //Mensaje
-                                        bf.getMessage(), //Titulo
+                                        bf.getMessage(), //Mensaje
+                                        "Error al actuaizar la caja", //Titulo
                                         JOptionPane.WARNING_MESSAGE); //Imagen 
                             }
 
@@ -116,20 +116,16 @@ public class Caja {
 
                     public void handleFault(BackendlessFault bf) {
                         JOptionPane.showMessageDialog(c, //Componente
-                                "Error al actuaizar la caja", //Mensaje
-                                bf.getMessage(), //Titulo
+                                bf.getMessage(), //Mensaje
+                                "Error al actuaizar la caja", //Titulo
                                 JOptionPane.WARNING_MESSAGE); //Imagen 
 
                     }
                 });
 
-
     }
 
-   
-
     //Getters y Setters
-
     public String getObjectId() {
         return objectId;
     }

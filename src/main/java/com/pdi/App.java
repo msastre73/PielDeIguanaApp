@@ -19,17 +19,17 @@ import javax.swing.JOptionPane;
 public class App {
 
     public static void main(String[] args) {
-        Backendless.initApp(
-                "6A7ADC93-D77A-7657-FFB3-0C6CEAA4BC00", //application-id 
-                "EA6346BD-5299-D2C3-FF57-F77ED11B3400", //secret-key
+       Backendless.initApp(
+                "436619EC-61C6-B46C-FFE8-1E486BA58900", //application-id 
+                "5D2D087A-60F3-6191-FFE8-CFA168B0E000", //secret-key
                 "v1" //version
         );
 
-        final Cliente clienteMarcos = new Cliente();
+        /*final Cliente clienteMarcos = new Cliente();
         clienteMarcos.setNombre("Rogelio");
         clienteMarcos.setApellido("Sastre");
         clienteMarcos.setMail("pepito@gmail.com");
-        clienteMarcos.setDescuento(0.5F);
+        clienteMarcos.setDescuento(0.5F);/*
         
         
 
@@ -63,7 +63,7 @@ public class App {
             }
         });*/
 
-        final Evento evento1 = new Evento();
+        /*final Evento evento1 = new Evento();
         evento1.setCantidadDePersonas(100);
         evento1.setCosto(1500);
         evento1.setLugar("Buenos Aires");
@@ -146,8 +146,21 @@ public class App {
                 System.out.println("Error: " + bf.getMessage());  
             }
         });*/
+        /*Caja caja = new Caja();
+        caja.setMinOK(true);
+        caja.setMinimo(0);
+        caja.setSaldo(0);
         
-        
+        Backendless.Persistence.of(Caja.class).save(caja, new AsyncCallback<Caja>() {
+
+           public void handleResponse(Caja t) {
+               System.out.println("Caja Creada");
+           }
+
+           public void handleFault(BackendlessFault bf) {
+               System.out.println("Error" + bf.getMessage());}
+       });*/
+                
         
     }
 }

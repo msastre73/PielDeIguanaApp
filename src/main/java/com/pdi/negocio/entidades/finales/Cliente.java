@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class Cliente extends Persona{
     //Atributos
-    private ArrayList<Evento> eventos;
+    
     private float descuento;
     
     //Constructores
@@ -22,10 +22,10 @@ public class Cliente extends Persona{
     public Cliente() {
     }
 
-    public Cliente(ArrayList<Evento> eventos, float descuento, String objectId, String nombre,
+    public Cliente(float descuento, String objectId, String nombre,
             String apellido, String mail) {
         super(objectId, nombre, apellido, mail);
-        this.eventos = eventos;
+        
         this.descuento = descuento;
     }
     
@@ -43,19 +43,10 @@ public class Cliente extends Persona{
         //TODO - Desarrollar codigo
     }
     
-    public int getCantidadDeEventos(){
-        return eventos.size();
-    }
+    
     
     //Getters y Setters
 
-    public ArrayList<Evento> getEventos() {
-        return eventos;
-    }
-
-    public void setEventos(ArrayList<Evento> eventos) {
-        this.eventos = eventos;
-    }
 
     public float getDescuento() {
         return descuento;

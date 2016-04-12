@@ -292,19 +292,21 @@ public class VentanaMaestra extends javax.swing.JFrame {
     }
 
     private void initCAJA(final Component c) {
-        Backendless.Persistence.of(Caja.class).findById("2D2F42A3-414A-151E-FF52-31BC7E80E500",
+        Backendless.Persistence.of(Caja.class).findById("60F4BCD9-7C85-AA78-FF4C-4C86DD1BAE00",
                 new AsyncCallback<Caja>() {
 
                     public void handleResponse(Caja cajaBackendless) {
                         CAJA.setMinimo(cajaBackendless.getMinimo());
                         CAJA.setSaldo(cajaBackendless.getSaldo());
                         CAJA.setMinOK(cajaBackendless.isMinOK());
+                        System.out.println("Caja cargada");
+                        
 }
 
                     public void handleFault(BackendlessFault bf) {
                         JOptionPane.showMessageDialog(c, //Componente
-                                "Error al cargar la caja", //Mensaje
-                                bf.getMessage(), //Titulo
+                                bf.getMessage(), //Mensaje
+                                "Error al cargar la caja", //Titulo
                                 JOptionPane.WARNING_MESSAGE); //Imagen 
 
                     }

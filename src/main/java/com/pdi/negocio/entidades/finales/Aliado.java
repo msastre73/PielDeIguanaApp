@@ -15,7 +15,6 @@ import java.util.ArrayList;
  */
 public class Aliado extends Persona{
     //Atributos
-    private ArrayList<Evento> eventos;
     private float comisionMonto;
     private float comisionPorcentaje;
     
@@ -24,18 +23,16 @@ public class Aliado extends Persona{
     public Aliado() {
     }
 
-    public Aliado(ArrayList<Evento> eventos, float comisionMonto, float comisionPorcentaje,
+    public Aliado(float comisionMonto, float comisionPorcentaje,
             String id, String nombre, String apellido, String mail) {
         super(id, nombre, apellido, mail);
-        this.eventos = eventos;
+        
         this.comisionMonto = comisionMonto;
         this.comisionPorcentaje = comisionPorcentaje;
     }
     
     //Metodos
-    public int getCantidadDeEventos(){
-        return eventos.size();
-    }
+    
 
     @Override
     public String toString() {
@@ -47,13 +44,6 @@ public class Aliado extends Persona{
     
     //Getters y Setters
 
-    public ArrayList<Evento> getEventos() {
-        return eventos;
-    }
-
-    public void setEventos(ArrayList<Evento> eventos) {
-        this.eventos = eventos;
-    }
 
     public float getComisionMonto() {
         return comisionMonto;
