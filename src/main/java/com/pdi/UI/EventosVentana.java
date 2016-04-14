@@ -18,8 +18,14 @@ import com.pdi.negocio.entidades.finales.*;
 import com.pdi.util.General;
 import com.pdi.negocio.enums.TipoDeEvento;
 import com.pdi.negocio.enums.EstadoDeEvento;
+import com.pdi.util.Funciones;
 import java.awt.Component;
+import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 
 import javax.swing.JOptionPane;
@@ -434,6 +440,11 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
         generarPDFBtn.setText("Generar PDF");
         generarPDFBtn.setEnabled(false);
+        generarPDFBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generarPDFBtnActionPerformed(evt);
+            }
+        });
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Detalles del Evento"));
 
@@ -598,6 +609,11 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
         cotizarBtn.setText("Cotizar");
         cotizarBtn.setEnabled(false);
+        cotizarBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cotizarBtnActionPerformed(evt);
+            }
+        });
 
         consumidoBtn.setText("Consumido");
         consumidoBtn.setEnabled(false);
@@ -1064,6 +1080,24 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     private void comisionAcumuladaTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comisionAcumuladaTxtActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_comisionAcumuladaTxtActionPerformed
+
+    private void generarPDFBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generarPDFBtnActionPerformed
+       
+    }//GEN-LAST:event_generarPDFBtnActionPerformed
+
+    private void cotizarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cotizarBtnActionPerformed
+        
+        Date fechaEvento;
+        try {
+            fechaEvento = General.formatoFecha.parse("15/04/2016");
+            float cotiz = Funciones.cotizar("Venado Tuerto", fechaEvento, 150, "Casorio", 0);
+            System.out.println("Valor de la cotizacion: " + cotiz);
+        } catch (ParseException ex) {
+            Logger.getLogger(EventosVentana.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+    }//GEN-LAST:event_cotizarBtnActionPerformed
 
     private void habilitarDetalles() {
         lugarTxt.setEnabled(true);

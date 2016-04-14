@@ -9,10 +9,13 @@ import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.pdi.negocio.entidades.finales.Caja;
+import com.pdi.negocio.entidades.finales.CantidadesBase;
+import com.pdi.negocio.entidades.finales.PreciosBase;
+import com.pdi.negocio.entidades.finales.VariablesCotizacion;
+import com.pdi.util.General;
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.JOptionPane;
-
 
 /**
  *
@@ -23,8 +26,11 @@ public class VentanaMaestra extends javax.swing.JFrame {
     /**
      * Creates new form VentanaMaestra
      */
-    //Instancia de la Caja utilizada para todas las ventanas
+    //Instancias de objetos utilizadas en varias ventanass
     public static Caja CAJA = new Caja();
+    public static CantidadesBase CANT_BASE = new CantidadesBase();
+    public static PreciosBase PRECIOS_BASE = new PreciosBase();
+    public static VariablesCotizacion VARS_COTIZ = new VariablesCotizacion();
 
     //Instancias de las ventanas, para poder interactuar entre ellas
     public static EventosVentana eventosCurrent;
@@ -32,7 +38,10 @@ public class VentanaMaestra extends javax.swing.JFrame {
 
     public VentanaMaestra() {
         initComponents();
-        initCAJA(this);
+        initCAJA();
+        initCANT_BASE();
+        initPRECIOS_BASE();
+        initVARS_COTIZ();
     }
 
     /**
@@ -66,6 +75,7 @@ public class VentanaMaestra extends javax.swing.JFrame {
         jMenu4 = new javax.swing.JMenu();
         jMenuItem13 = new javax.swing.JMenuItem();
         jMenuItem14 = new javax.swing.JMenuItem();
+        jMenuItem15 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -167,11 +177,29 @@ public class VentanaMaestra extends javax.swing.JFrame {
 
         jMenu4.setText("Configuracion");
 
-        jMenuItem13.setText("Actualizar Precios");
+        jMenuItem13.setText("Actualizar Precios Base");
+        jMenuItem13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem13ActionPerformed(evt);
+            }
+        });
         jMenu4.add(jMenuItem13);
 
         jMenuItem14.setText("Modificar Cant Base");
+        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem14ActionPerformed(evt);
+            }
+        });
         jMenu4.add(jMenuItem14);
+
+        jMenuItem15.setText("Modificar Variables de Cotiz");
+        jMenuItem15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem15ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem15);
 
         jMenuBar1.add(jMenu4);
 
@@ -256,6 +284,30 @@ public class VentanaMaestra extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
+    private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
+      if (!CantidadesBaseVentana.abierta) {
+            CantidadesBaseVentana v = new CantidadesBaseVentana();
+            jDesktopPane1.add(v);
+            v.setVisible(true);
+      }
+    }//GEN-LAST:event_jMenuItem14ActionPerformed
+
+    private void jMenuItem13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem13ActionPerformed
+        if (!PreciosBaseVentana.abierta) {
+            PreciosBaseVentana v = new PreciosBaseVentana();
+            jDesktopPane1.add(v);
+            v.setVisible(true);
+      }
+    }//GEN-LAST:event_jMenuItem13ActionPerformed
+
+    private void jMenuItem15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem15ActionPerformed
+          if (!VariablesCotizacionVentana.abierta) {
+            VariablesCotizacionVentana v = new VariablesCotizacionVentana();
+            jDesktopPane1.add(v);
+            v.setVisible(true);
+      } 
+    }//GEN-LAST:event_jMenuItem15ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -291,20 +343,19 @@ public class VentanaMaestra extends javax.swing.JFrame {
         });
     }
 
-    private void initCAJA(final Component c) {
-        Backendless.Persistence.of(Caja.class).findById("60F4BCD9-7C85-AA78-FF4C-4C86DD1BAE00",
+    private void initCAJA() {
+        Backendless.Persistence.of(Caja.class).findById(General.ID_CAJA,
                 new AsyncCallback<Caja>() {
 
                     public void handleResponse(Caja cajaBackendless) {
-                        CAJA.setMinimo(cajaBackendless.getMinimo());
-                        CAJA.setSaldo(cajaBackendless.getSaldo());
-                        CAJA.setMinOK(cajaBackendless.isMinOK());
-                        System.out.println("Caja cargada");
                         
-}
+                        CAJA = cajaBackendless;
+                        System.out.println("Caja cargada");
+                      
+                    }
 
                     public void handleFault(BackendlessFault bf) {
-                        JOptionPane.showMessageDialog(c, //Componente
+                        JOptionPane.showMessageDialog(VentanaMaestra.this, //Componente
                                 bf.getMessage(), //Mensaje
                                 "Error al cargar la caja", //Titulo
                                 JOptionPane.WARNING_MESSAGE); //Imagen 
@@ -312,12 +363,65 @@ public class VentanaMaestra extends javax.swing.JFrame {
                     }
                 });
 
-        
-        
-        
-
     }
 
+    private void initCANT_BASE() {
+        Backendless.Persistence.of(CantidadesBase.class).findById(General.ID_CANT_BASE,
+                new AsyncCallback<CantidadesBase>() {
+
+                    public void handleResponse(CantidadesBase cantBaseBackendless) {
+                      CANT_BASE = cantBaseBackendless;
+                        System.out.println("Cantidades Base cargadas");
+                        
+                    }
+
+                    public void handleFault(BackendlessFault bf) {
+                    JOptionPane.showMessageDialog(VentanaMaestra.this, //Componente
+                                bf.getMessage(), //Mensaje
+                                "Error al cargar las Cantidades Base", //Titulo
+                                JOptionPane.WARNING_MESSAGE); //Imagen 
+                    }
+                });
+    }
+    
+    private void initPRECIOS_BASE() {
+        Backendless.Persistence.of(PreciosBase.class).findById(General.ID_PRECIOS_BASE,
+                new AsyncCallback<PreciosBase>() {
+
+                    public void handleResponse(PreciosBase preciosBaseBackendless) {
+                      PRECIOS_BASE = preciosBaseBackendless;
+                        System.out.println("Precios Base cargadas");
+                        
+                    }
+
+                    public void handleFault(BackendlessFault bf) {
+                    JOptionPane.showMessageDialog(VentanaMaestra.this, //Componente
+                                bf.getMessage(), //Mensaje
+                                "Error al cargar los Precios Base", //Titulo
+                                JOptionPane.WARNING_MESSAGE); //Imagen 
+                    }
+                });
+    }
+
+    private void initVARS_COTIZ() {
+        Backendless.Persistence.of(VariablesCotizacion.class).findById(General.ID_VARS_COTIZ,
+                new AsyncCallback<VariablesCotizacion>() {
+
+                    public void handleResponse(VariablesCotizacion varsCotizBackendless) {
+                      VARS_COTIZ = varsCotizBackendless;
+                        System.out.println("Variables Cotizacion cargadas");
+                        
+                    }
+
+                    public void handleFault(BackendlessFault bf) {
+                    JOptionPane.showMessageDialog(VentanaMaestra.this, //Componente
+                                bf.getMessage(), //Mensaje
+                                "Error al cargar las Variables Cotizacion", //Titulo
+                                JOptionPane.WARNING_MESSAGE); //Imagen 
+                    }
+                });
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JList jList1;
@@ -332,6 +436,7 @@ public class VentanaMaestra extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem12;
     private javax.swing.JMenuItem jMenuItem13;
     private javax.swing.JMenuItem jMenuItem14;
+    private javax.swing.JMenuItem jMenuItem15;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;

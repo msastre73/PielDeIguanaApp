@@ -8,6 +8,7 @@ package com.pdi.negocio.entidades.finales;
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
+import com.pdi.util.General;
 import java.awt.Component;
 import java.util.Date;
 import javax.swing.JOptionPane;
@@ -89,7 +90,7 @@ public class Caja {
     }
 
     private void actualizarBackendless(final Component c) {
-        Backendless.Persistence.of(Caja.class).findById("60F4BCD9-7C85-AA78-FF4C-4C86DD1BAE00",
+        Backendless.Persistence.of(Caja.class).findById(General.ID_CAJA,
                 new AsyncCallback<Caja>() {
 
                     public void handleResponse(Caja cajaBackendless) {

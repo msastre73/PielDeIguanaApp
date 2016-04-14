@@ -38,6 +38,9 @@ public class AliadosVentana extends javax.swing.JInternalFrame {
     DefaultListModel modeloListaEventos = new DefaultListModel();
 
     public AliadosVentana() {
+        //Pone en verdadero el atrib que controla si la ventana esta abierta
+        this.abierta = true;
+        
         initComponents();
         //Relaciona el modelo con la lista
         aliadosList.setModel(modeloLista);

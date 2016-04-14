@@ -54,7 +54,9 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
     private DefaultTableModel modeloTablaBebidas = new DefaultTableModel(null, colNameBebidas);
 
     public InventarioVentana() {
-
+        //Pone en verdadero el atrib que controla si la ventana esta abierta
+        this.abierta = true;
+        
         initComponents();
 
         //Relaciona el modelo con la tabla

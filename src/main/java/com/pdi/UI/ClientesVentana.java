@@ -42,6 +42,10 @@ public class ClientesVentana extends javax.swing.JInternalFrame {
     DefaultListModel modeloListaEventos = new DefaultListModel();
 
     public ClientesVentana() {
+        
+        //Pone en verdadero el atrib que controla si la ventana esta abierta
+        this.abierta = true;
+        
         initComponents();
         //Relaciona el modelo con la lista
         clientesList.setModel(modeloLista);

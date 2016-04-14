@@ -49,6 +49,9 @@ public class CajaVentana extends javax.swing.JInternalFrame {
     DefaultTableModel modeloTabla = new DefaultTableModel(null, colName);
 
     public CajaVentana() {
+        //Pone en verdadero el atrib que controla si la ventana esta abierta
+        this.abierta = true;
+        
         initComponents();
 
         //Relaciona los modelos con las tablas

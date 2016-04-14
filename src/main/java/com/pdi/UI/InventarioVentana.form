@@ -221,7 +221,6 @@
         <Component class="javax.swing.JButton" name="agregarVarios">
           <Properties>
             <Property name="text" type="java.lang.String" value="Agregar Varios"/>
-            <Property name="actionCommand" type="java.lang.String" value="Agregar Varios"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="agregarVariosActionPerformed"/>
@@ -390,7 +389,6 @@
         <Component class="javax.swing.JButton" name="eliminarBebida">
           <Properties>
             <Property name="text" type="java.lang.String" value="Eliminar Bebida"/>
-            <Property name="actionCommand" type="java.lang.String" value="Eliminar Bebida"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="eliminarBebidaActionPerformed"/>

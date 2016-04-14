@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author Marcos
  */
-public class CantidadesBase {
+public class PreciosBase {
 
     //Atributos
 
@@ -48,7 +48,7 @@ public class CantidadesBase {
     
     //Constructor
 
-    public CantidadesBase() {
+    public PreciosBase() {
     }
     
     //Getters y Setters

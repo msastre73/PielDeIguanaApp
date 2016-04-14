@@ -8,27 +8,27 @@ package com.pdi.UI;
 import com.backendless.Backendless;
 import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
-import com.pdi.negocio.entidades.finales.CantidadesBase;
+import com.pdi.negocio.entidades.finales.PreciosBase;
 import javax.swing.JOptionPane;
 
 /**
  *
  * @author Marcos
  */
-public class CantidadesBaseVentana extends javax.swing.JInternalFrame {
+public class PreciosBaseVentana extends javax.swing.JInternalFrame {
 
     /**
-     * Creates new form CantidadesBaseVentana
+     * Creates new form PreciosBaseVentana
      */
     //Atrib para manejar si hay una ventana abierta de este tipo
     public static boolean abierta = false;
 
-    public CantidadesBaseVentana() {
+    public PreciosBaseVentana() {
         //Pone en verdadero el atrib que controla si la ventana esta abierta
         this.abierta = true;
 
         initComponents();
-        cargarCANT_BASE();
+        cargarPRECIOS_BASE();
 
     }
 
@@ -121,10 +121,10 @@ public class CantidadesBaseVentana extends javax.swing.JInternalFrame {
         });
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel1.setText("CANTIDADES BASE");
+        jLabel1.setText("PRECIOS BASE");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        jLabel2.setText("Son las cantidades para un evento de 100 personas, utilizadas de base para calcular el costo de los eventos.");
+        jLabel2.setText("Precios de los insumos utilizadas de base para calcular el costo de los eventos.");
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel4.setText("CACHAÇA:");
@@ -343,12 +343,12 @@ public class CantidadesBaseVentana extends javax.swing.JInternalFrame {
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(pulpaDuraznoTxt))))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(153, 153, 153)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 251, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(16, 16, 16))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(guardarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(155, 155, 155))
+                        .addGap(185, 185, 185)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(149, 149, 149)
+                        .addComponent(guardarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -469,7 +469,7 @@ public class CantidadesBaseVentana extends javax.swing.JInternalFrame {
                             .addComponent(bartendersTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(guardarBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
@@ -484,83 +484,83 @@ public class CantidadesBaseVentana extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formInternalFrameClosed
 
     private void guardarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guardarBtnActionPerformed
-        VentanaMaestra.CANT_BASE.setJugoManzana(Float.parseFloat(jugoManzanaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setJugoNaranja(Float.parseFloat(jugoNaranjaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setLicorDurazno(Float.parseFloat(licorDuraznoTxt.getText()));
-        VentanaMaestra.CANT_BASE.setLicorKiwi(Float.parseFloat(licorKiwiTxt.getText()));
-        VentanaMaestra.CANT_BASE.setLima(Float.parseFloat(limaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setLimon(Float.parseFloat(limonTxt.getText()));
-        VentanaMaestra.CANT_BASE.setMenta(Float.parseFloat(mentaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setPulpaAnana(Float.parseFloat(pulpaAnanaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setPulpaDurazno(Float.parseFloat(pulpaDuraznoTxt.getText()));
-        VentanaMaestra.CANT_BASE.setPulpaFrutilla(Float.parseFloat(pulpaFrutillaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setRevolvedores(Float.parseFloat(revolvedoresTxt.getText()));
-        VentanaMaestra.CANT_BASE.setRonBlanco(Float.parseFloat(ronBlancoTxt.getText()));
-        VentanaMaestra.CANT_BASE.setRonDorado(Float.parseFloat(ronDoradoTxt.getText()));
-        VentanaMaestra.CANT_BASE.setSoda(Float.parseFloat(sodaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setSorbetes(Float.parseFloat(sorbetesTxt.getText()));
-        VentanaMaestra.CANT_BASE.setSprite(Float.parseFloat(spriteTxt.getText()));
-        VentanaMaestra.CANT_BASE.setVasos(Float.parseFloat(vasosTxt.getText()));
-        VentanaMaestra.CANT_BASE.setVodka(Float.parseFloat(vodkaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setWhisky(Float.parseFloat(whiskyTxt.getText()));
-        VentanaMaestra.CANT_BASE.setAzucar(Float.parseFloat(azucarTxt.getText()));
-        VentanaMaestra.CANT_BASE.setBartenders(Float.parseFloat(bartendersTxt.getText()));
-        VentanaMaestra.CANT_BASE.setCachaca(Float.parseFloat(cachacaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setCampari(Float.parseFloat(campariTxt.getText()));
-        VentanaMaestra.CANT_BASE.setFernet(Float.parseFloat(fernetTxt.getText()));
-        VentanaMaestra.CANT_BASE.setGancia(Float.parseFloat(ganciaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setGranadina(Float.parseFloat(granadinaTxt.getText()));
-        VentanaMaestra.CANT_BASE.setHielo(Float.parseFloat(hieloTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setJugoManzana(Float.parseFloat(jugoManzanaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setJugoNaranja(Float.parseFloat(jugoNaranjaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setLicorDurazno(Float.parseFloat(licorDuraznoTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setLicorKiwi(Float.parseFloat(licorKiwiTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setLima(Float.parseFloat(limaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setLimon(Float.parseFloat(limonTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setMenta(Float.parseFloat(mentaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setPulpaAnana(Float.parseFloat(pulpaAnanaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setPulpaDurazno(Float.parseFloat(pulpaDuraznoTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setPulpaFrutilla(Float.parseFloat(pulpaFrutillaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setRevolvedores(Float.parseFloat(revolvedoresTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setRonBlanco(Float.parseFloat(ronBlancoTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setRonDorado(Float.parseFloat(ronDoradoTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setSoda(Float.parseFloat(sodaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setSorbetes(Float.parseFloat(sorbetesTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setSprite(Float.parseFloat(spriteTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setVasos(Float.parseFloat(vasosTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setVodka(Float.parseFloat(vodkaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setWhisky(Float.parseFloat(whiskyTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setAzucar(Float.parseFloat(azucarTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setBartenders(Float.parseFloat(bartendersTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setCachaca(Float.parseFloat(cachacaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setCampari(Float.parseFloat(campariTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setFernet(Float.parseFloat(fernetTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setGancia(Float.parseFloat(ganciaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setGranadina(Float.parseFloat(granadinaTxt.getText()));
+        VentanaMaestra.PRECIOS_BASE.setHielo(Float.parseFloat(hieloTxt.getText()));
         
         
-        Backendless.Persistence.of(CantidadesBase.class).save(VentanaMaestra.CANT_BASE, 
-                new AsyncCallback<CantidadesBase>() {
+        Backendless.Persistence.of(PreciosBase.class).save(VentanaMaestra.PRECIOS_BASE, 
+                new AsyncCallback<PreciosBase>() {
 
-            public void handleResponse(CantidadesBase t) {
-             JOptionPane.showMessageDialog(CantidadesBaseVentana.this, //Componente
-                        "Se modificaron las cantidades base correctamente.", //Mensaje
-                        "Cantidades Modificadas", //Titulo
+            public void handleResponse(PreciosBase t) {
+             JOptionPane.showMessageDialog(PreciosBaseVentana.this, //Componente
+                        "Se modificaron los precios base correctamente.", //Mensaje
+                        "Precios Base Modificados", //Titulo
                         JOptionPane.INFORMATION_MESSAGE); //Imagen
             }
 
             public void handleFault(BackendlessFault bf) {
-            JOptionPane.showMessageDialog(CantidadesBaseVentana.this, //Componente
+            JOptionPane.showMessageDialog(PreciosBaseVentana.this, //Componente
                         "Error: " + bf.getMessage(), //Mensaje
-                        "Error al modificar Cantidades Base", //Titulo
+                        "Error al modificar Precios Base", //Titulo
                         JOptionPane.WARNING_MESSAGE); //Imagen  
             }
         });
 
     }//GEN-LAST:event_guardarBtnActionPerformed
 
-    private void cargarCANT_BASE() {
-        jugoManzanaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getJugoManzana()));
-        jugoNaranjaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getJugoNaranja()));
-        licorDuraznoTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getLicorDurazno()));
-        licorKiwiTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getLicorKiwi()));
-        limaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getLima()));
-        limonTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getLimon()));
-        mentaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getMenta()));
-        pulpaAnanaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getPulpaAnana()));
-        pulpaDuraznoTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getPulpaDurazno()));
-        pulpaFrutillaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getPulpaFrutilla()));
-        revolvedoresTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getRevolvedores()));
-        ronBlancoTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getRonBlanco()));
-        ronDoradoTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getRonDorado()));
-        sodaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getSoda()));
-        sorbetesTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getSorbetes()));
-        spriteTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getSprite()));
-        vasosTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getVasos()));
-        vodkaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getVodka()));
-        whiskyTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getWhisky()));
-        azucarTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getAzucar()));
-        bartendersTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getBartenders()));
-        cachacaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getCachaca()));
-        campariTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getCampari()));
-        fernetTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getFernet()));
-        ganciaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getGancia()));
-        granadinaTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getGranadina()));
-        hieloTxt.setText(Float.toString(VentanaMaestra.CANT_BASE.getHielo()));
+    private void cargarPRECIOS_BASE() {
+        jugoManzanaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getJugoManzana()));
+        jugoNaranjaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getJugoNaranja()));
+        licorDuraznoTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getLicorDurazno()));
+        licorKiwiTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getLicorKiwi()));
+        limaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getLima()));
+        limonTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getLimon()));
+        mentaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getMenta()));
+        pulpaAnanaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getPulpaAnana()));
+        pulpaDuraznoTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getPulpaDurazno()));
+        pulpaFrutillaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getPulpaFrutilla()));
+        revolvedoresTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getRevolvedores()));
+        ronBlancoTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getRonBlanco()));
+        ronDoradoTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getRonDorado()));
+        sodaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getSoda()));
+        sorbetesTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getSorbetes()));
+        spriteTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getSprite()));
+        vasosTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getVasos()));
+        vodkaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getVodka()));
+        whiskyTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getWhisky()));
+        azucarTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getAzucar()));
+        bartendersTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getBartenders()));
+        cachacaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getCachaca()));
+        campariTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getCampari()));
+        fernetTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getFernet()));
+        ganciaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getGancia()));
+        granadinaTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getGranadina()));
+        hieloTxt.setText(Float.toString(VentanaMaestra.PRECIOS_BASE.getHielo()));
 
     }
 

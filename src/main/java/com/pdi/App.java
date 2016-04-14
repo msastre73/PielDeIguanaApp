@@ -5,12 +5,22 @@ import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.backendless.messaging.BodyParts;
 import com.backendless.messaging.MessageStatus;
+import com.backendless.utils.ReflectionUtil;
+import com.pdi.UI.VentanaMaestra;
 import com.pdi.negocio.entidades.finales.Caja;
+import com.pdi.negocio.entidades.finales.CantidadesBase;
 import com.pdi.negocio.entidades.finales.Cliente;
 import com.pdi.negocio.entidades.finales.Evento;
+import com.pdi.negocio.entidades.finales.PreciosBase;
+import com.pdi.negocio.entidades.finales.VariablesCotizacion;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import sun.reflect.misc.ReflectUtil;
 
 /**
  * Hello world!
@@ -161,6 +171,84 @@ public class App {
                System.out.println("Error" + bf.getMessage());}
        });*/
                 
+        /*PreciosBase cbase = new PreciosBase();
+        cbase.setCachaca(40);
+        cbase.setVodka(38);
+        cbase.setRonDorado(100);
+        cbase.setRonBlanco(42.06F);
+        cbase.setFernet(165);
+        cbase.setGancia(48.86F);
+        cbase.setWhisky(81.53F);
+        cbase.setCampari(90.76F);
+        cbase.setLicorKiwi(35);
+        cbase.setLicorDurazno(35);
+        cbase.setLimon(5);
+        cbase.setLima(10);
+        cbase.setMenta(50);
+        cbase.setAzucar(85.35F);
+        cbase.setGranadina(37.73F);
+        cbase.setJugoNaranja(15.4F);
+        cbase.setJugoManzana(15.4F);
+        cbase.setPulpaFrutilla(37.61F);
+        cbase.setPulpaAnana(37.61F);
+        cbase.setPulpaDurazno(37.61F);
+        cbase.setSprite(30.98F);
+        cbase.setSoda(11.28F);
+        cbase.setVasos(260);
+        cbase.setRevolvedores(70);
+        cbase.setSorbetes(60);
+        cbase.setHielo(40);
+        cbase.setBartenders(250);
         
+        Backendless.Persistence.of(PreciosBase.class).save(cbase, new AsyncCallback<PreciosBase>() {
+
+           public void handleResponse(PreciosBase t) {
+               System.out.println("Precios BAse Creadas"); 
+           }
+
+           public void handleFault(BackendlessFault bf) {
+               System.out.println("Error: " + bf.getMessage());
+           }
+       });*/
+      /*  VariablesCotizacion var = new VariablesCotizacion();
+        var.setGananciaFijo(2000);
+        var.setGananciaVariable(0.1F);
+        var.setTasaRecargo(0.03F);
+        var.setFactorPromo(1.5F);
+        var.setFleteLocal(300);
+        var.setFleteAfuera(1000);
+        
+        Backendless.Persistence.of(VariablesCotizacion.class).save(var, new AsyncCallback<VariablesCotizacion>() {
+
+           public void handleResponse(VariablesCotizacion t) {
+               System.out.println("Variables creadas");}
+
+           public void handleFault(BackendlessFault bf) {
+               System.out.println("Error" + bf.getMessage());}
+       });*/
+       
+       /*Field[] fields = CantidadesBase.class.getDeclaredFields();
+       for(int i = 0; i < fields.length; i++){
+           try {
+               System.out.println(fields[i] + fields[i].get(VentanaMaestra.CANT_BASE).toString());
+           } catch (IllegalArgumentException ex) {
+               Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+           } catch (IllegalAccessException ex) {
+               Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+           }
+           
+       }*/
+       
+       
+       
+       
+       /* Method[] methods = CantidadesBase.class.getMethods();
+        for(int i = 0; i < methods.length; i++){
+           System.out.println("Metodo " + i + ": " + methods[i]);
+           
+       }*/
+       
+        
+       
     }
 }
