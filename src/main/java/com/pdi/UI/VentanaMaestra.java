@@ -372,6 +372,7 @@ public class VentanaMaestra extends javax.swing.JFrame {
                     public void handleResponse(CantidadesBase cantBaseBackendless) {
                       CANT_BASE = cantBaseBackendless;
                         System.out.println("Cantidades Base cargadas");
+                        System.out.println(CANT_BASE.getCachaca());
                         
                     }
 

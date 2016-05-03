@@ -463,7 +463,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="generarPDFBtn">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Generar PDF"/>
+        <Property name="text" type="java.lang.String" value="Generar Presupuesto"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
       <Events>
@@ -990,6 +990,9 @@
         <Property name="text" type="java.lang.String" value="Generar Orden de Compra"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="generarOrdenDeCompraBtnActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="cargandoTxt">
       <Properties>

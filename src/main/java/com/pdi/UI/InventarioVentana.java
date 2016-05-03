@@ -11,10 +11,12 @@ import com.backendless.async.callback.AsyncCallback;
 import com.backendless.exceptions.BackendlessFault;
 import com.pdi.negocio.entidades.finales.Bebida;
 import com.pdi.negocio.entidades.finales.Varios;
+import com.pdi.negocio.enums.TipoDeBebida;
 import com.pdi.util.General;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -58,11 +60,11 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
         this.abierta = true;
         
         initComponents();
-
+        
         //Relaciona el modelo con la tabla
         variosTbl.setModel(modeloTablaVarios);
         bebidasTbl.setModel(modeloTablaBebidas);
-
+        cargarTipoDeBebida();
         cargarVariosYBebidas();
 
         //Listener para que este pendiente de los cambios en las tablas
@@ -205,8 +207,8 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         agregarBebida = new javax.swing.JButton();
-        bebidaTxt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        bebidaCmb = new javax.swing.JComboBox();
         jLabel6 = new javax.swing.JLabel();
         valorInventarioLbl = new javax.swing.JLabel();
         cargandoTxt = new javax.swing.JLabel();
@@ -276,7 +278,6 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
         });
 
         agregarVarios.setText("Agregar Varios");
-        agregarVarios.setActionCommand("Agregar Varios");
         agregarVarios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 agregarVariosActionPerformed(evt);
@@ -329,7 +330,7 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(minimoVariosTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(agregarVarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(eliminarVarios))
@@ -373,7 +374,6 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
         jLabel10.setText("Minimo:");
 
         eliminarBebida.setText("Eliminar Bebida");
-        eliminarBebida.setActionCommand("Eliminar Bebida");
         eliminarBebida.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 eliminarBebidaActionPerformed(evt);
@@ -395,6 +395,8 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
 
         jLabel3.setText("Bebida:");
 
+        bebidaCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -406,7 +408,7 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bebidaTxt))
+                        .addComponent(bebidaCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -437,7 +439,7 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
                 .addGap(3, 3, 3)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(bebidaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(bebidaCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -526,7 +528,8 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
 
         if (validacionOK) {
             cargandoTxt.setText("Guardando bebida...");
-            final String bebida = bebidaTxt.getText();
+            TipoDeBebida bebidaTipo = (TipoDeBebida) bebidaCmb.getSelectedItem();
+            final String bebida = bebidaTipo.toString();
             final String marca = marcaTxt.getText();
             final float contUnit = Float.parseFloat(contUnitTxt.getText());
             final float existencia = Float.parseFloat(existBebidasTxt.getText());
@@ -815,11 +818,12 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
 
     private boolean validarFormBebidas() {
         //Validar que la bebida no este vacia
-        if (bebidaTxt.getText().equals("")) {
+        
+        if (bebidaCmb.getSelectedIndex() == -1) {
             JOptionPane.showMessageDialog(this,
-                    "La bebida no puede estar vacia",
-                    "Completar Bebida", JOptionPane.WARNING_MESSAGE);
-            bebidaTxt.requestFocus();
+                    "Seleccione un tipo de bebida de la lista",
+                    "Seleccionar Bebida", JOptionPane.WARNING_MESSAGE);
+            bebidaCmb.requestFocus();
             return false;
         }
 
@@ -921,7 +925,7 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this,
                     "El concepto no puede estar vacio",
                     "Completar Concepto", JOptionPane.WARNING_MESSAGE);
-            bebidaTxt.requestFocus();
+            conceptoTxt.requestFocus();
             return false;
         }
 
@@ -990,7 +994,7 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
     }
 
     private void limpiarFormBebidas() {
-        bebidaTxt.setText("");
+        bebidaCmb.setSelectedIndex(-1);
         marcaTxt.setText("");
         contUnitTxt.setText("");
         existBebidasTxt.setText("");
@@ -1008,6 +1012,12 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
         variosTbl.clearSelection();
     }
 
+    private void cargarTipoDeBebida(){
+        bebidaCmb.setModel(new DefaultComboBoxModel(TipoDeBebida.values()));
+        bebidaCmb.setSelectedIndex(-1);
+                
+    }
+    
     private void cargarVariosYBebidas() {
         cargandoTxt.setText("Cargando tablas Varios...");
 
@@ -1172,7 +1182,7 @@ public class InventarioVentana extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton agregarBebida;
     private javax.swing.JButton agregarVarios;
-    private javax.swing.JTextField bebidaTxt;
+    private javax.swing.JComboBox bebidaCmb;
     private javax.swing.JTable bebidasTbl;
     private javax.swing.JLabel cargandoTxt;
     private javax.swing.JTextField conceptoTxt;

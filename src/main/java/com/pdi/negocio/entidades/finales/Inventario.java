@@ -5,8 +5,10 @@
  */
 package com.pdi.negocio.entidades.finales;
 
+import com.backendless.BackendlessCollection;
 import com.pdi.negocio.interfaces.Valuable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -48,9 +50,57 @@ public class Inventario implements Valuable{
     
     //Metodos
 
+    public static HashMap<String, Float> obtenerExistencias(
+    BackendlessCollection<Bebida> bebidasBK){
+        HashMap<String, Float> existencias = new HashMap<String, Float>();
+        
+        List bebidasList = bebidasBK.getData();
+        for(int i = 0; i < bebidasList.size(); i++){
+            Bebida bebida = (Bebida) bebidasList.get(i);
+            String tipo = bebida.getTipo().toLowerCase();
+            Float exist = bebida.getExistencia();
+            if(existencias.get(tipo) != null){
+                
+                exist += existencias.get(tipo);
+            }
+            existencias.put(tipo, exist);
+        }
+        System.out.println("EXISTENCIAS");
+        for(String key: existencias.keySet()){
+            System.out.println(key + ": " + existencias.get(key));
+            
+        }
+        return existencias;
+ 
+    }
+    
+    public static HashMap<String, Float> obtenerMinimos(
+    BackendlessCollection<Bebida> bebidasBK){
+        HashMap<String, Float> minimos = new HashMap<String, Float>();
+         List bebidasList = bebidasBK.getData();
+        for(int i = 0; i < bebidasList.size(); i++){
+            Bebida bebida = (Bebida) bebidasList.get(i);
+            String tipo = bebida.getTipo().toLowerCase();
+            Float min = bebida.getMinimo();
+            if(minimos.get(tipo) == null){
+                
+                minimos.put(tipo, min);
+            }
+            
+        }
+        System.out.println("MINIMOS");
+        for(String key: minimos.keySet()){
+            System.out.println(key + ": " + minimos.get(key));
+            
+        }
+        return minimos;
+        
+    }
+    
+    
     @Override
     public float valuar() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return 0;
     }
     
     public void chequearMin(){

@@ -36,6 +36,8 @@ public enum TipoDeEvento {
         return null;
     }
     
+    
+    
     public int getCod(){
         return cod;
     }

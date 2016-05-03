@@ -19,16 +19,21 @@ import com.pdi.util.General;
 import com.pdi.negocio.enums.TipoDeEvento;
 import com.pdi.negocio.enums.EstadoDeEvento;
 import com.pdi.util.Funciones;
+import com.pdi.util.PdfGenerator;
 import java.awt.Component;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JFileChooser;
 
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -50,6 +55,9 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
     //Modelo del ComboBox de Aliados
     DefaultComboBoxModel<Aliado> modeloComboAliados = new DefaultComboBoxModel<Aliado>();
+    
+    //Variable de los insumos necesarios. Se instancia cuando se cotiza el evento
+    HashMap<String, Object> insumosNecesarios;
 
     public EventosVentana() {
         //Pone en verdadero el atrib que controla si la ventana esta abierta
@@ -438,7 +446,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
             }
         });
 
-        generarPDFBtn.setText("Generar PDF");
+        generarPDFBtn.setText("Generar Presupuesto");
         generarPDFBtn.setEnabled(false);
         generarPDFBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -759,6 +767,11 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
         generarOrdenDeCompraBtn.setText("Generar Orden de Compra");
         generarOrdenDeCompraBtn.setEnabled(false);
+        generarOrdenDeCompraBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                generarOrdenDeCompraBtnActionPerformed(evt);
+            }
+        });
 
         cargandoTxt.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         cargandoTxt.setToolTipText("");
@@ -877,12 +890,16 @@ public class EventosVentana extends javax.swing.JInternalFrame {
                 if (!adeudadoTxt.getText().equals("")) {
                     e.setMontoRestante(Float.parseFloat(adeudadoTxt.getText()));
                 }
+                
+                if (insumosNecesarios != null){
+                    e.setInsumosNeecesarios(insumosNecesarios);
+                }
 
                 if (esNuevo) {
                     agregar(e, this, c, e.getAliado());
 
                 } else {
-                    Aliado alyTest = e.getAliado();
+                    
                     editar(e, this, c, cAnterior, e.getAliado(), aAnterior);
                 }
 
@@ -1082,22 +1099,97 @@ public class EventosVentana extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_comisionAcumuladaTxtActionPerformed
 
     private void generarPDFBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generarPDFBtnActionPerformed
-       
-    }//GEN-LAST:event_generarPDFBtnActionPerformed
-
-    private void cotizarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cotizarBtnActionPerformed
+        //Se abre la ventana para seleccionar donde guardar el presupuesto
         
-        Date fechaEvento;
-        try {
-            fechaEvento = General.formatoFecha.parse("15/04/2016");
-            float cotiz = Funciones.cotizar("Venado Tuerto", fechaEvento, 150, "Casorio", 0);
-            System.out.println("Valor de la cotizacion: " + cotiz);
-        } catch (ParseException ex) {
-            Logger.getLogger(EventosVentana.class.getName()).log(Level.SEVERE, null, ex);
+        boolean validacionOK = validarForm();
+        
+        if(validacionOK){
+            try {
+                
+                //Datos del evento en el Formulario
+                String lugar = lugarTxt.getText();
+                Date fecha = General.formatoFecha.parse(fechaTxt.getText());
+                float cantidad = Float.parseFloat(personasTxt.getText());
+                String tipo = tipoDeEventoCmb.getSelectedItem().toString();
+                Cliente c = (Cliente) clienteCmb.getSelectedItem();
+                float precio = Float.parseFloat(precioTxt.getText());
+                Aliado a = null;
+                if(aliadoCmb.getSelectedIndex() != -1){
+                    a = (Aliado) aliadoCmb.getSelectedItem();
+                }
+                
+                JFileChooser guardarComoFch = new JFileChooser();
+                FileNameExtensionFilter filtro = new FileNameExtensionFilter("PDF", "pdf");
+                guardarComoFch.setFileFilter(filtro);
+                String nombreArchivo = "Presupuesto " + tipo+ " - " + c.toString() + ".pdf";
+                guardarComoFch.setSelectedFile(new File(nombreArchivo));
+                guardarComoFch.showSaveDialog(this);
+                
+                File archivo = guardarComoFch.getSelectedFile();
+                String path = archivo.getPath();
+                
+                
+                
+                PdfGenerator.generarPresupuesto(lugar, fecha, cantidad, tipo, c, precio, a, path);
+            } catch (ParseException ex) {
+                Logger.getLogger(EventosVentana.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+            
+            
         }
         
         
+        
+    }//GEN-LAST:event_generarPDFBtnActionPerformed
+
+    private void cotizarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cotizarBtnActionPerformed
+        boolean validacionOK = validarMenosPrecio();
+        if(validacionOK){
+                   Date fechaEvento;
+        try {
+            fechaEvento = General.formatoFecha.parse(fechaTxt.getText());
+            String lugar= lugarTxt.getText();
+            float personas = Float.parseFloat(personasTxt.getText());
+            String tipo = (String) tipoDeEventoCmb.getSelectedItem().toString();
+            Cliente cliente = (Cliente) clienteCmb.getSelectedItem();
+            float desc = cliente.getDescuento();
+            
+            if(aliadoCmb.getSelectedItem() != null){
+                Aliado aliado = (Aliado) aliadoCmb.getSelectedItem();
+                float comision = aliado.getComisionPorcentaje();
+            }
+            
+            float cotiz = Funciones.cotizar(lugar, fechaEvento, personas, tipo, desc);
+            insumosNecesarios = Funciones.insumosNec(personas, tipo);
+            
+                    
+            System.out.println("Valor de la cotizacion: " + cotiz);
+            precioTxt.setText(Float.toString(cotiz));
+            
+            //Cotizacion en Formato $$
+            //String cotizStr = General.formatoPesos.format(cotiz);
+            //precioTxt.setText(cotizStr);
+            
+            
+            
+        } catch (ParseException ex) {
+            Logger.getLogger(EventosVentana.class.getName()).log(Level.SEVERE, null, ex);
+        } 
+        }
+
+        
+        
     }//GEN-LAST:event_cotizarBtnActionPerformed
+
+    private void generarOrdenDeCompraBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_generarOrdenDeCompraBtnActionPerformed
+        //Trer los insumos necesarios
+        //Traer los insumos en stock
+        BackendlessCollection<Bebida> bebidasBK = Backendless.Persistence.of(Bebida.class).find();
+        Inventario.obtenerExistencias(bebidasBK);
+        Inventario.obtenerMinimos(bebidasBK);
+        
+    }//GEN-LAST:event_generarOrdenDeCompraBtnActionPerformed
 
     private void habilitarDetalles() {
         lugarTxt.setEnabled(true);
@@ -1421,7 +1513,43 @@ public class EventosVentana extends javax.swing.JInternalFrame {
 
     //Validar los campos
     private boolean validarForm() {
+       boolean todoMenosPrecioOK = validarMenosPrecio();
+       boolean precioOK = validarPrecio();
+       
+       if(todoMenosPrecioOK && precioOK){
+           return true;
+       }
 
+        return false;
+    }
+    
+    private boolean validarPrecio(){
+                //Validar que el precio no este vacio
+        if (precioTxt.getText().equals("")) {
+            JOptionPane.showMessageDialog(this,
+                    "El precio no puede estar vacio. Presione el boton Cotizar"
+                    + "para obtener el precio o ingreselo manualmente.",
+                    "Cotizar", JOptionPane.WARNING_MESSAGE);
+            precioTxt.requestFocus();
+            return false;
+        }
+
+        //Validar que el precio sea un numero decimal
+        try {
+            Float.parseFloat(precioTxt.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this,
+                    "El precio debe ser un numero decimal",
+                    "Corregir Precio ", JOptionPane.WARNING_MESSAGE);
+            precioTxt.requestFocus();
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private boolean validarMenosPrecio(){
+    
         //Validar que el lugar no esté vacio
         if (lugarTxt.getText().equals("")) {
             JOptionPane.showMessageDialog(this,
@@ -1541,26 +1669,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
             }
         }
 
-        //Validar que el precio no este vacio
-        if (precioTxt.getText().equals("")) {
-            JOptionPane.showMessageDialog(this,
-                    "El precio no puede estar vacia. Presione el boton Cotizar"
-                    + "para obtener el precio o ingreselo manualmente.",
-                    "Cotizar", JOptionPane.WARNING_MESSAGE);
-            precioTxt.requestFocus();
-            return false;
-        }
 
-        //Validar que el precio sea un numero decimal
-        try {
-            Float.parseFloat(precioTxt.getText());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this,
-                    "El precio debe ser un numero decimal",
-                    "Corregir Precio ", JOptionPane.WARNING_MESSAGE);
-            precioTxt.requestFocus();
-            return false;
-        }
 
         //Validar que haya un Estado seleccionado
         if (estadoCmb.getSelectedIndex() == -1) {
@@ -1571,8 +1680,7 @@ public class EventosVentana extends javax.swing.JInternalFrame {
             return false;
         }
 
-        return true;
-
+        return true;    
     }
 
 

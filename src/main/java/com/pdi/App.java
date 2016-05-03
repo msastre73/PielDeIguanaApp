@@ -6,6 +6,7 @@ import com.backendless.exceptions.BackendlessFault;
 import com.backendless.messaging.BodyParts;
 import com.backendless.messaging.MessageStatus;
 import com.backendless.utils.ReflectionUtil;
+import com.pdi.UI.CantidadesBaseVentana;
 import com.pdi.UI.VentanaMaestra;
 import com.pdi.negocio.entidades.finales.Caja;
 import com.pdi.negocio.entidades.finales.CantidadesBase;
@@ -13,9 +14,11 @@ import com.pdi.negocio.entidades.finales.Cliente;
 import com.pdi.negocio.entidades.finales.Evento;
 import com.pdi.negocio.entidades.finales.PreciosBase;
 import com.pdi.negocio.entidades.finales.VariablesCotizacion;
+import java.awt.Label;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,7 +31,7 @@ import sun.reflect.misc.ReflectUtil;
  */
 public class App {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
        Backendless.initApp(
                 "436619EC-61C6-B46C-FFE8-1E486BA58900", //application-id 
                 "5D2D087A-60F3-6191-FFE8-CFA168B0E000", //secret-key
@@ -249,6 +252,16 @@ public class App {
        }*/
        
         
+       /*Field[] campos = CantidadesBaseVentana.class.getDeclaredFields();
        
+        for (Field campo : campos) {
+            
+            System.out.println(campo);
+            System.out.println("CLASE: " + campo.get(campo));
+        }*/
+       
+
+        
+        
     }
 }

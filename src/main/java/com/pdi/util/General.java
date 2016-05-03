@@ -8,6 +8,7 @@ package com.pdi.util;
 import com.backendless.persistence.BackendlessDataQuery;
 import com.backendless.persistence.QueryOptions;
 import java.awt.Font;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -29,6 +30,9 @@ public abstract class General {
 
     public static SimpleDateFormat formatoFecha
             = new SimpleDateFormat("dd/MM/yyyy");
+    
+    public static DecimalFormat formatoPesos
+            = new DecimalFormat("$#,###.##");
 
     public final static String formatoMail
             = "^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$";

@@ -9,6 +9,7 @@ import com.pdi.negocio.enums.EstadoDeEvento;
 import com.pdi.negocio.enums.TipoDeEvento;
 import com.pdi.util.General;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  *
@@ -31,31 +32,12 @@ public class Evento {
     private float montoPagado;
     private float montoRestante;
     private EstadoDeEvento estadoDeEvento;
+    private HashMap<String, Object> insumosNeecesarios;
 
     //Constructores
     public Evento() {
     }
 
-    public Evento(String objectId, Date fecha, String lugar, int cantidadDePersonas,
-            TipoDeEvento tipoDeEvento, Aliado aliado, Cliente cliente,
-            float precio, float costo, float resultado, float montoPagado,
-            float montoRestante, EstadoDeEvento estadoDeEvento) {
-
-        //Atributos
-        this.objectId = objectId;
-        this.fecha = fecha;
-        this.lugar = lugar;
-        this.cantidadDePersonas = cantidadDePersonas;
-        this.tipoDeEvento = tipoDeEvento;
-        this.aliado = aliado;
-        this.cliente = cliente;
-        this.precio = precio;
-        this.costo = costo;
-        this.resultado = resultado;
-        this.montoPagado = montoPagado;
-        this.montoRestante = montoRestante;
-        this.estadoDeEvento = estadoDeEvento;
-    }
 
     //Metodos
     public void cotizar() {
@@ -69,6 +51,17 @@ public class Evento {
     }
 
     //Getters y Setters
+
+    public HashMap<String, Object> getInsumosNeecesarios() {
+        return insumosNeecesarios;
+    }
+
+    public void setInsumosNeecesarios(HashMap<String, Object> insumosNeecesarios) {
+        this.insumosNeecesarios = insumosNeecesarios;
+    }
+    
+    
+    
     public String getObjectId() {
         return objectId;
     }
